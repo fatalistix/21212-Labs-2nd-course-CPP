@@ -20,7 +20,15 @@ int main()
         }
         inputString >> ForthInterpreter::Instance();
         outputString << ForthInterpreter::Instance();
+
+        size_t it;
+        while ((it = outputString.find('\n', it)) != std::string::npos)
+        {
+            outputString.replace(it, 1, "\n< ");
+            ++it;
+        }
         std::cout << "< " << outputString << std::endl;
+
     } while (true);
 
     std::cout << "< exited without errors" << std::endl;

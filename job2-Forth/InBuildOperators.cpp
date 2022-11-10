@@ -1,6 +1,6 @@
 #include "InBuildOperators.h"
 
-#include "ClearStackFunction.h"
+#include "FunctionClearStack.h"
 
 void Dup::DoCommand(std::stack<int> & fStack_,
                     std::stringstream &, std::string &)

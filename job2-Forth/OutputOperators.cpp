@@ -25,3 +25,25 @@ void Emit::DoCommand(std::stack<int> & fStack_,
 
     output += char(top);
 }
+
+void Carriage::DoCommand(std::stack<int> &,
+        std::stringstream &, std::string & output)
+{
+    output += '\n';
+}
+
+void PrintString::DoCommand(std::stack<int> &,
+        std::stringstream & input, std::string & output)
+{
+    int inputSymbol = input.get();
+    if (inputSymbol == EOF)
+    {
+        throw std::invalid_argument(".\" ?");
+    }
+    while (input.peek() != EOF && input.peek() != '\"')
+    {
+        inputSymbol = input.get();
+        output += char(inputSymbol);
+    }
+    input.get();
+}

@@ -1,6 +1,6 @@
 #include "Forth.h"
 
-#include <algorithm>
+#include "FunctionGetCommandType.h"
 
 Forth::~Forth()
 {
@@ -24,59 +24,30 @@ std::string & operator>>(std::string & in, Forth & f)
 std::string & operator<<(std::string & out, Forth & f)
 {
     out = f.output;
+    return out;
 }
 
-
-bool IsNumber(std::string & s)
-{
-    if (std::ranges::any_of(s.begin(), s.end(),
-                            [](char c) {return !std::isdigit(c);}))
-    {
-        return false;
-    }
-    return true;
-}
-
-typedef char commandType;
-enum COMMAND_TYPE
-{
-    UNKNOWN = -1,
-    PUSH_INT = 0,
-    COMMAND = 1,
-
-};
-
-commandType GetCommandType(std::string & s)
-{
-    if (IsNumber(s))
-    {
-        return PUSH_INT;
-    }
-    else if (CommandFactory::Instance().IsRegistered(s))
-    {
-        return COMMAND;
-    }
-    else
-    {
-        return UNKNOWN;
-    }
-}
 
 void Forth::DoCommands()
 {
     output.clear();
     std::string stringCommand;
-    while (!inputData_.eof())
+    while (inputData_ >> stringCommand)
     {
-        inputData_ >> stringCommand;
-        auto inputCommand = GetCommandType(stringCommand);
+        //inputData_ >> stringCommand;
+        auto inputCommandType = GetCommandType(stringCommand);
 
-        if (inputCommand == PUSH_INT)
+        if (inputCommandType == EMPTY)
+        {
+            forthStatus_ = OK;
+            break;
+        }
+        else if (inputCommandType == PUSH_INT)
         {
             forthStack_.push(std::stoi(stringCommand));
             forthStatus_ = OK;
         }
-        else if (inputCommand == COMMAND)
+        else if (inputCommandType == COMMAND)
         {
             auto it = createdCommands_.find(stringCommand);
             if (it == createdCommands_.end())
