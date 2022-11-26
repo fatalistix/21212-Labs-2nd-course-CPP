@@ -1,115 +1,208 @@
+#pragma once
+
+#include <iostream>
+#include <vector>
+
 #define DEBUG
 
-// This associative container avoids to keep pairs key-value
-// but only when key have comparison operations
-// It uses array for containing elements
-// and uses binary search for finding key or insert
+/**
+ * @brief A container made up of (key, value) pairs, which can be
+ * retrieved based on a key, in logarithmic time.
+ *
+ * @tparam Key      Type of key objects.
+ * @tparam Value    Type of mapped objects.
+ *
+ * FlatMap supports bidirectional iterators.
+ */
 template<class Key, class Value>
 class FlatMap
 {
 public:
-    // Constructors
-    FlatMap();
-    FlatMap(const FlatMap&);
-    FlatMap(FlatMap&&) noexcept;
+    /// All pairs of Keys (as _key) and Values (as _value) are stored in struct.
+    struct Element
+    {
+        const Key   _key;
+              Value _value;
+    };
 
-    // Destructor
+    /**
+     * @brief @b Constructors: \n
+     * @c FlatMap() - Creates a %FlatMap with no elements. \n\n
+     *
+     * @c FlatMap(const FlatMap &) - %FlatMap copy constructor.
+     * @param m - A %FlatMap of identical elements types.
+     *
+     * All the element of @a m are copied, but any unused capacity in @a m will not be copied. \n
+     *
+     * Copy constructing requires lineal time. \n\n
+     *
+     * @c FlatMap(FlatMap &&) - %FlatMap move constructor. \n\n
+     * The newly-created %FlatMap contains the exact content of the moved instance.
+     * Afterwards @a m is a valid, but unspecified %FlatMap. \n
+     *
+     * Move constructing requires constant time.
+     */
+    FlatMap();
+    FlatMap(const FlatMap &);
+    FlatMap(FlatMap &&) noexcept;
+
+    /**
+       *  The dtor only erases the elements, and note that if the
+       *  elements themselves are pointers, the pointed-to memory is
+       *  not touched in any way.  Managing the pointer is the user's
+       *  responsibility.
+       */
     ~FlatMap();
 
-    // Swaps values of 2 FlatMaps
-    void swap(FlatMap&);
+    /**
+     * @brief Swaps data with another %FlatMap.
+     * @param m - A %FlatMap of the same element type.
+     *
+     * This exchanges the elements between two FlatMaps in constant time
+     * (It is only swapping a pointer and size_t fields).
+     */
+    void swap(FlatMap &);
 
-    // Assignment operators
-    FlatMap& operator=(const FlatMap&);
-    FlatMap& operator=(FlatMap&&) noexcept;
+    /**
+     * @brief @b %FlatMap @b assignment @b operators: \n
+     *
+     * @c operator=(const FlatMap &) - assignment operator.
+     * @param m - A %FlatMap of identical elements types.
+     *
+     * All the elements of @a m are copied, but any unused capacity in
+     * @a m will not be copied. \n
+     *
+     * Assignment requires lineal time. \n\n
+     *
+     * @c operator=(FlatMap &&) - move assignment operator. \n\n
+     *
+     * The content of @a m are moved into this %FlatMap (without copying).
+     * Afterwards @a m is a valid, but unspecified %FlatMap.\n
+     *
+     * Moving assignment requires constant time.
+     */
+    FlatMap & operator=(const FlatMap &);
+    FlatMap & operator=(FlatMap &&) noexcept;
 
-    // Erases all data of FlatMap, sets length = 0 and capacity = default_capacity = 8
+    /**
+     *  Erases all elements in a %FlatMap.  Note that this function only
+     *  erases the elements, and that if the elements themselves are
+     *  pointers, the pointed-to memory is not touched in any way.
+     *  Managing the pointer is the user's responsibility.
+     */
     void clear();
 
-    // Erases data by key and if success returns true
-    // If key is not in map, returns false
-    bool erase(const Key&);
+    /**
+     *  @brief Erases elements according to the provided key.
+     *  @param  k - Key of element to be erased.
+     *  @return  True if element was erased and false if element wasn't found
+     *
+     *  This function erases the element located by the given key from
+     *  a %FlatMap.
+     *  Note that this function only erases the element, and that if
+     *  the element is itself a pointer, the pointed-to memory is not touched
+     *  in any way.  Managing the pointer is the user's responsibility. \n
+     *
+     *  Erase requires logarithmic time for search and erase and lineal time for alignment.
+     */
+    bool erase(const Key &);
 
-    // Inserts data
-    // Finds place by binary search
-    // If key already exists, returns false
-    // else inserts this element and returns true
-    bool insert(const Key&, const Value&);
+    /**
+    *  @brief Attempts to insert a Element{_key, _value} into the %FlatMap.
+    *  @param k - Key to be inserted.
+    *  @param v - Value to be mapped by Key.
+    *
+    *  @return  True if element was inserted and false if the Key is already in %FlatMap.
+    *
+    *  This function attempts to insert a (key, value) pair into the %FlatMap.
+    *  A %FlatMap relies on unique keys and thus a pair is only inserted if its
+    *  first element (the key) is not already present in the %FlatMap.
+    *
+    *  Insertion requires logarithmic time for finding a position to inserting and
+    *  lineal time for alignment.
+    */
+    bool insert(const Key &, const Value &);
 
-    // Checks if element is in FlatMap by key
-    // returns true if key is
-    // else returns false
-    bool contains(const Key&) const;
+    /**
+     * Finds whether an element with the given key exists.
+     *
+     * @param k - Key of (key, value) pair to be located.
+     *
+     * @return True if there is an element with the specified key.
+     *
+     * Locating requires logarithmic time.
+     */
+    bool contains(const Key &) const;
 
-    // Insecure
-    // If FlatMap contains this key, returns value
-    // else returns random element
-    Value& operator[](const Key&);
+    /**
+       *  @brief  Subscript ( @c [] ) access to %FlatMap data.
+       *  @param  k - The key for which data should be retrieved.
+       *  @return  A reference to the value of the (key,value) pair.
+       *
+       *  Allows for easy lookup with the subscript ( @c [] )
+       *  operator.  Returns data associated with the key specified in
+       *  subscript.  If the key does not exist, a pair with that key
+       *  is created using default values, which is then returned. \n
+       *
+       *  Lookup requires logarithmic time.
+       */
+    Value & operator[](const Key &);
 
-    // Secure
-    // If FlatMap contains this key, returns value
-    // else throws std::invalid_argument()
-    Value& at(const Key&);
+    /**
+       *  @brief  Access to %FlatMap data.
+       *  @param  k - The key for which data should be retrieved.
+       *  @return  A reference to the data whose key is equivalent to @a k, if
+       *           such a data is present in the %FlatMap.
+       *  @throw  std::out_of_range  If no such data is present.
+       *
+       *  Lookup requires logarithmic time.
+       */
+    Value & at(const Key &);
+    const Value & at(const Key &) const;
 
-    // Secure
-    // For const elements
-    const Value& at(const Key&) const;
-
-    // Returns number of elements in this container
+    /// Returns the size of the %FlatMap.
     [[nodiscard]] size_t size() const;
 
-    // Returns true if no elements else false
+    /** Returns true if the %map is empty.  (Thus begin() would equal
+       *  end().)
+      */
     [[nodiscard]] bool empty() const;
 
-    // EQ operator, checks all elements in container
-    // If there are any different returns false
     template<class TKey, class TValue>
-    friend bool operator==(const FlatMap<TKey, TValue>& a, const FlatMap<TKey, TValue>& b);
+    friend bool operator==(const FlatMap<TKey, TValue> & a, const FlatMap<TKey, TValue> & b);
 
-    // Not EQ operator, calls !(.. == ..)
     template<class TKey, class TValue>
-    friend bool operator!=(const FlatMap<TKey, TValue>& a, const FlatMap<TKey, TValue>& b);
+    friend bool operator!=(const FlatMap<TKey, TValue> & a, const FlatMap<TKey, TValue> & b);
 
-    // Methods for tests
-    // Converts array of keys and values to std::vector<key>
-#ifdef DEBUG
-    explicit operator std::vector<Key>() const
+    template <Key, Value>
+    class iterator
     {
-        std::vector<Key> forRet;
-        for (size_t i = 0; i < _length; i++)
-        {
-            forRet.push_back(_array[i]._key);
-        }
-        return forRet;
-    }
+    public:
+        iterator()=default;
+        iterator(const iterator &)=default;
 
-    // Converts array of keys and values to std::vector<value>
-    explicit operator std::vector<Value>() const
-    {
-        std::vector<Value> forRet;
-        for (size_t i = 0; i < _length; i++)
-        {
-            forRet.push_back(_array[i]._value);
-        }
-        return forRet;
-    }
-#endif
+        ~iterator()=default;
+
+        Element & operator*() const noexcept { return *cur_; }
+        iterator & operator++() noexcept { return ++cur_; }
+        iterator operator++(int) noexcept { auto forRet = *this; ++cur_; return forRet; }
+        iterator & operator--() noexcept { return --cur_; }
+        iterator operator--(int) noexcept { auto forRet = *this; --cur_; return forRet; }
+        Element * operator->() const noexcept { return cur_; }
+        iterator & operator=(const iterator &) noexcept =default;
+        iterator & operator=(iterator &&) noexcept =default;
+
+    private:
+        Element * cur_;
+    };
 
 private:
-    struct Element      // All pairs of keys and values are stored in structs
-    {
-        Key   _key;
-        Value _value;
-    };
-    Element* _array;    // Massive of pairs
+    Element* _array;
     size_t static const _default_capacity = 8;
     size_t _length   = 0;
     size_t _capacity = _default_capacity;
 
-    // Addons
-    // Used quite in every function
-    // Binary search returns index of element when search ends
-    size_t binarySearch(const Key &k) const
+    size_t binarySearch(const Key & k) const
     {
         size_t l = 0;
         size_t r = _length;
@@ -132,6 +225,28 @@ private:
         }
         return l;
     }
+
+#ifdef DEBUG
+    std::vector<Key> GetVectorOfKeys()
+    {
+        std::vector<Key> forRet;
+        for (size_t i = 0; i < _length; i++)
+        {
+            forRet.push_back(_array[i]._key);
+        }
+        return forRet;
+    }
+
+    std::vector<Value> GetVectorOfValues()
+    {
+        std::vector<Value> forRet;
+        for (size_t i = 0; i < _length; i++)
+        {
+            forRet.push_back(_array[i]._value);
+        }
+        return forRet;
+    }
+#endif
 };
 
 template<class Key, class Value>
@@ -192,9 +307,9 @@ FlatMap<Key, Value>& FlatMap<Key, Value>::operator=(FlatMap&& m) noexcept
 template <class Key, class Value>
 void FlatMap<Key, Value>::swap(FlatMap& m)
 {
-    FlatMap buf(*this);
-    *this = std::move(m);
-        m = std::move(buf);
+    FlatMap buf = std::move(*this);
+          *this = std::move(m);
+              m = std::move(buf);
 }
 
 template <class Key, class Value>
@@ -274,7 +389,7 @@ Value& FlatMap<Key, Value>::at(const Key& k)
     {
         return _array[index]._value;
     }
-    throw std::invalid_argument("This key doesn't contains in FlatMap");
+    throw std::out_of_range("This key doesn't contains in FlatMap");
 }
 
 template <class Key, class Value>
@@ -300,7 +415,16 @@ bool FlatMap<Key, Value>::empty() const
 {
     return !_length;
 }
-
+/**
+   *  @brief  FlatMap equality comparison.
+   *  @param  a - A %FlatMap.
+   *  @param  b - A %FlatMap of the same type as @a a.
+   *  @return  True if the size and elements of the maps are equal.
+   *
+   *  This is an equivalence relation.  It is linear in the size of the
+   *  maps.  Maps are considered equivalent if their sizes are equal,
+   *  and if corresponding elements compare equal.
+  */
 template <class Key, class Value>
 bool operator==(const FlatMap<Key, Value>& a, const FlatMap<Key, Value>& b)
 {
@@ -319,6 +443,7 @@ bool operator==(const FlatMap<Key, Value>& a, const FlatMap<Key, Value>& b)
     return false;
 }
 
+/// Based on operator==
 template<class Key, class Value>
 bool operator!=(const FlatMap<Key, Value>& a, const FlatMap<Key, Value>& b)
 {
