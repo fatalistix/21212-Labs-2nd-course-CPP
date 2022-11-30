@@ -1,9 +1,12 @@
 #pragma once
 
-#include <iostream>
-#include <vector>
-
 #define DEBUG
+
+#include <iostream>
+
+#ifdef DEBUG
+#include <vector>
+#endif
 
 /**
  * @brief A container made up of (key, value) pairs, which can be
@@ -18,12 +21,10 @@ template<class Key, class Value>
 class FlatMap
 {
 public:
-    /// All pairs of Keys (as _key) and Values (as _value) are stored in struct.
-    struct Element
-    {
-        const Key   _key;
-              Value _value;
-    };
+    /// All pairs of Keys (as _key) and Values (as _value) are stored in class
+    /// @a value_type which is similar to @a std::pair<>.
+    typedef std::pair<Key, Value> value_type;
+    typedef std::pair<const Key &, Value &> return_type;
 
     /**
      * @brief @b Constructors: \n
@@ -121,7 +122,7 @@ public:
     *  Insertion requires logarithmic time for finding a position to inserting and
     *  lineal time for alignment.
     */
-    bool insert(const Key &, const Value &);
+    bool insert(const value_type &);
 
     /**
      * Finds whether an element with the given key exists.
@@ -174,31 +175,84 @@ public:
     template<class TKey, class TValue>
     friend bool operator!=(const FlatMap<TKey, TValue> & a, const FlatMap<TKey, TValue> & b);
 
-    template <Key, Value>
+    /// @c Iterator and @c const @c iterator for a %FlatMap.
     class iterator
     {
     public:
         iterator()=default;
-        iterator(const iterator &)=default;
+        explicit iterator(value_type * x) : cur_(x) {};
+        iterator(const iterator &) {}
 
-        ~iterator()=default;
+        ~iterator() { delete ret_; };
 
-        Element & operator*() const noexcept { return *cur_; }
-        iterator & operator++() noexcept { return ++cur_; }
+        return_type & operator*() noexcept { delete ret_;
+            ret_ = new return_type(cur_->first, cur_->second); return *ret_; }
+        iterator & operator++() noexcept { ++cur_; return *this; }
         iterator operator++(int) noexcept { auto forRet = *this; ++cur_; return forRet; }
-        iterator & operator--() noexcept { return --cur_; }
+        iterator & operator--() noexcept { --cur_; return *this; }
         iterator operator--(int) noexcept { auto forRet = *this; --cur_; return forRet; }
-        Element * operator->() const noexcept { return cur_; }
-        iterator & operator=(const iterator &) noexcept =default;
-        iterator & operator=(iterator &&) noexcept =default;
+        return_type * operator->() noexcept { delete ret_;
+            return ret_ = new return_type(cur_->first, cur_->second); }
+        iterator & operator=(const iterator &) noexcept=default;
+        iterator & operator=(iterator &&) noexcept=default;
+
+        bool operator==(iterator & i) { return cur_ == i.cur_; }
+        bool operator!=(iterator & i) { return cur_ != i.cur_; }
 
     private:
-        Element * cur_;
+        return_type * ret_ = nullptr;
+        value_type  * cur_ = nullptr;
     };
 
+    class const_iterator
+    {
+    public:
+        const_iterator()=default;
+        explicit const_iterator(value_type * x) : cur_(x) {};
+        const_iterator(const const_iterator &)=default;
+
+        ~const_iterator()=default;
+
+        value_type operator*() const noexcept { return *cur_; }
+        const_iterator & operator++() noexcept { ++cur_; return *this; }
+        const_iterator operator++(int) noexcept { auto forRet = *this; ++cur_; return forRet; }
+        const_iterator & operator--() noexcept { --cur_; return *this; }
+        const_iterator operator--(int) noexcept { auto forRet = *this; --cur_; return forRet; }
+        const value_type * operator->() const noexcept { return cur_; }
+        const_iterator & operator=(const const_iterator &) noexcept =default;
+        const_iterator & operator=(const_iterator &&) noexcept =default;
+
+        bool operator==(iterator & i) { return cur_ == i.cur_; }
+        bool operator!=(iterator & i) { return cur_ != i.cur_; }
+
+    private:
+        const value_type * cur_ = nullptr;
+    };
+
+    /**
+     * @brief @b iterators: \n\n
+     *
+     * @c begin()/cbegin():
+     * @return a read-write/read-only iterator that points to the first pair in the %FlatMap.
+     *
+     * Iterator is done in ascending order according to the keys.
+     */
+    const_iterator cbegin() noexcept { return const_iterator(_array); }
+          iterator  begin() noexcept { return iterator(_array); }
+
+    /**
+     * @c end()/cend():
+     * @return a read-write/read-only iterator that points one past the last pair in the %FlatMap.
+     *
+     * Iterator is done in ascending order according to the keys.
+     */
+    const_iterator cend() noexcept { return const_iterator(_array + _length); }
+          iterator  end() noexcept { return iterator(_array + _length); }
+
 private:
-    Element* _array;
     size_t static const _default_capacity = 8;
+
+    value_type * _array;
     size_t _length   = 0;
     size_t _capacity = _default_capacity;
 
@@ -210,11 +264,11 @@ private:
         while (l < r)
         {
             m = (r + l) >> 1;
-            if (_array[m]._key < k)
+            if (_array[m].first < k)
             {
                 l = m + 1;
             }
-            else if (_array[m]._key > k)
+            else if (_array[m].first > k)
             {
                 r = m;
             }
@@ -227,12 +281,13 @@ private:
     }
 
 #ifdef DEBUG
+public:
     std::vector<Key> GetVectorOfKeys()
     {
         std::vector<Key> forRet;
         for (size_t i = 0; i < _length; i++)
         {
-            forRet.push_back(_array[i]._key);
+            forRet.push_back(_array[i].first);
         }
         return forRet;
     }
@@ -242,17 +297,21 @@ private:
         std::vector<Value> forRet;
         for (size_t i = 0; i < _length; i++)
         {
-            forRet.push_back(_array[i]._value);
+            forRet.push_back(_array[i].second);
         }
         return forRet;
     }
 #endif
 };
 
+#ifdef DEBUG
+#undef DEBUG
+#endif
+
 template<class Key, class Value>
 FlatMap<Key, Value>::FlatMap()
 {
-    _array = new Element[_capacity];
+    _array = new value_type[_capacity];
 }
 
 template <class Key, class Value>
@@ -266,7 +325,7 @@ FlatMap<Key, Value>::FlatMap(const FlatMap& m) :
     _length  (m._length),
     _capacity(m._capacity)
 {
-    _array = new Element[_capacity];
+    _array = new value_type[_capacity] ();
     std::copy(m._array, m._array + m._length, _array);
 }
 
@@ -289,7 +348,7 @@ FlatMap<Key, Value>& FlatMap<Key, Value>::operator=(const FlatMap& m)
     _capacity = m._capacity;
     _length   = m._length;
     delete[]  _array;
-    _array    = new Element[_capacity];
+    _array    = new value_type[_capacity];
     std::copy(m._array, m._array + m._length, _array);
     return *this;
 }
@@ -318,14 +377,14 @@ void FlatMap<Key, Value>::clear()
     _length   = 0;
     _capacity = _default_capacity;
     delete[] _array;
-    _array = new Element[_capacity];
+    _array = new value_type[_capacity]();
 }
 
 template <class Key, class Value>
 bool FlatMap<Key, Value>::erase(const Key& k)
 {
     const size_t index = binarySearch(k);
-    if (index < _length && _array[index]._key == k)
+    if (index < _length && _array[index].first == k)
     {
         std::copy(_array + index + 1, _array + _length, _array + index);
         --_length;
@@ -335,10 +394,10 @@ bool FlatMap<Key, Value>::erase(const Key& k)
 }
 
 template <class Key, class Value>
-bool FlatMap<Key, Value>::insert(const Key& k, const Value& v)
+bool FlatMap<Key, Value>::insert(const value_type & x)
 {
-    size_t index = binarySearch(k);
-    if (index < _length && _array[index]._key == k)
+    size_t index = binarySearch(x.first);
+    if (index < _length && _array[index].first == x.first)
     {
         return false;
     }
@@ -346,12 +405,11 @@ bool FlatMap<Key, Value>::insert(const Key& k, const Value& v)
     if (_length + 1 >= _capacity) {
         _capacity <<= 1;
     }
-    auto* buf = new Element[_capacity];
+    auto* buf = new value_type[_capacity];
     std::copy(_array, _array + index, buf);
     std::copy(_array + index, _array + _length, buf + index + 1);
 
-    buf[index]._value = v;
-    buf[index]._key   = k;
+    buf[index] = x;
     delete[] _array;
     _array = buf;
 
@@ -363,7 +421,7 @@ template <class Key, class Value>
 bool FlatMap<Key, Value>::contains(const Key& k) const
 {
     const size_t index = binarySearch(k);
-    if (index < _length && _array[index]._key == k)
+    if (index < _length && _array[index].first == k)
     {
         return true;
     }
@@ -374,20 +432,20 @@ template <class Key, class Value>
 Value& FlatMap<Key, Value>::operator[](const Key& k)
 {
     const size_t index = binarySearch(k);
-    if (index < _length && _array[index]._key == k)
+    if (index < _length && _array[index].first == k)
     {
-        return _array[index]._value;
+        return _array[index].second;
     }
-    return FlatMap()._array[0]._value;
+    return FlatMap()._array[0].second;
 }
 
 template <class Key, class Value>
 Value& FlatMap<Key, Value>::at(const Key& k)
 {
     const size_t index = binarySearch(k);
-    if (index < _length && _array[index]._key == k)
+    if (index < _length && _array[index].first == k)
     {
-        return _array[index]._value;
+        return _array[index].second;
     }
     throw std::out_of_range("This key doesn't contains in FlatMap");
 }
@@ -397,9 +455,9 @@ const Value& FlatMap<Key, Value>::at(const Key& k) const
 {
 
     const size_t index = binarySearch(k);
-    if (index < _length && _array[index]._key == k)
+    if (index < _length && _array[index].first == k)
     {
-        return _array[index]._value;
+        return _array[index].second;
     }
     throw std::invalid_argument("This key doesn't contains in FlatMap");
 }
@@ -432,8 +490,8 @@ bool operator==(const FlatMap<Key, Value>& a, const FlatMap<Key, Value>& b)
     {
         for (size_t i = 0; i < a._length; i++)
         {
-            if ((a._array[i]._key   != b._array[i]._key) ||
-                (a._array[i]._value != b._array[i]._value))
+            if ((a._array[i].first  != b._array[i].first) ||
+                (a._array[i].second != b._array[i].second))
             {
                 return false;
             }
