@@ -263,7 +263,8 @@ private:
         size_t m;
         while (l < r)
         {
-            m = (r + l) >> 1;
+            // m = (r + l) >> 1;
+            m = (r >> 1) + (l >> 1) + ((r % 2) & (l % 2));
             if (_array[m].first < k)
             {
                 l = m + 1;
