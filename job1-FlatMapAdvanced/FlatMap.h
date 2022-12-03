@@ -24,7 +24,6 @@ public:
     /// All pairs of Keys (as _key) and Values (as _value) are stored in class
     /// @a value_type which is similar to @a std::pair<>.
     typedef std::pair<Key, Value> value_type;
-    typedef std::pair<const Key &, Value &> return_type;
 
     /**
      * @brief @b Constructors: \n
@@ -176,31 +175,33 @@ public:
     friend bool operator!=(const FlatMap<TKey, TValue> & a, const FlatMap<TKey, TValue> & b);
 
     /// @c Iterator and @c const @c iterator for a %FlatMap.
+    class iterator;
+    class const_iterator;
+
     class iterator
     {
     public:
         iterator()=default;
-        explicit iterator(value_type * x) : cur_(x) {};
-        iterator(const iterator &) {}
+        explicit iterator(value_type * x) : cur_(x) {}
+        iterator(const iterator &)=default;
 
-        ~iterator() { delete ret_; };
+        ~iterator()=default;
 
-        return_type & operator*() noexcept { delete ret_;
-            ret_ = new return_type(cur_->first, cur_->second); return *ret_; }
+        value_type & operator*() noexcept { return *cur_; }
         iterator & operator++() noexcept { ++cur_; return *this; }
         iterator operator++(int) noexcept { auto forRet = *this; ++cur_; return forRet; }
         iterator & operator--() noexcept { --cur_; return *this; }
         iterator operator--(int) noexcept { auto forRet = *this; --cur_; return forRet; }
-        return_type * operator->() noexcept { delete ret_;
-            return ret_ = new return_type(cur_->first, cur_->second); }
+        value_type * operator->() noexcept { return cur_; }
         iterator & operator=(const iterator &) noexcept=default;
-        iterator & operator=(iterator &&) noexcept=default;
 
         bool operator==(iterator & i) { return cur_ == i.cur_; }
         bool operator!=(iterator & i) { return cur_ != i.cur_; }
-
+        bool operator==(const_iterator & i) { return cur_ == i.cur_; }
+        bool operator!=(const_iterator & i) { return cur_ != i.cur_; }
+#ifndef DEBUG
     private:
-        return_type * ret_ = nullptr;
+#endif
         value_type  * cur_ = nullptr;
     };
 
@@ -208,25 +209,27 @@ public:
     {
     public:
         const_iterator()=default;
-        explicit const_iterator(value_type * x) : cur_(x) {};
+        explicit const_iterator(value_type * x) : cur_(x) {}
         const_iterator(const const_iterator &)=default;
 
         ~const_iterator()=default;
 
-        value_type operator*() const noexcept { return *cur_; }
+        const value_type & operator*() const noexcept { return *cur_; }
         const_iterator & operator++() noexcept { ++cur_; return *this; }
         const_iterator operator++(int) noexcept { auto forRet = *this; ++cur_; return forRet; }
         const_iterator & operator--() noexcept { --cur_; return *this; }
         const_iterator operator--(int) noexcept { auto forRet = *this; --cur_; return forRet; }
         const value_type * operator->() const noexcept { return cur_; }
-        const_iterator & operator=(const const_iterator &) noexcept =default;
-        const_iterator & operator=(const_iterator &&) noexcept =default;
+        const_iterator & operator=(const const_iterator &) noexcept=default;
 
+        bool operator==(const_iterator & i) { return cur_ == i.cur_; }
+        bool operator!=(const_iterator & i) { return cur_ != i.cur_; }
         bool operator==(iterator & i) { return cur_ == i.cur_; }
         bool operator!=(iterator & i) { return cur_ != i.cur_; }
-
+#ifndef DEBUG
     private:
-        const value_type * cur_ = nullptr;
+#endif
+        value_type * cur_ = nullptr;
     };
 
     /**
