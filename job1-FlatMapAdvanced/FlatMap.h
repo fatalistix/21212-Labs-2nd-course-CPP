@@ -168,69 +168,66 @@ public:
       */
     [[nodiscard]] bool empty() const;
 
-    template<class TKey, class TValue>
-    friend bool operator==(const FlatMap<TKey, TValue> & a, const FlatMap<TKey, TValue> & b);
+//    /// @c Iterator and @c const @c iterator for a %FlatMap.
+//    class iterator;
+//    class const_iterator;
+//
+//    class iterator
+//    {
+//    public:
+//        iterator()=default;
+//        explicit iterator(value_type * x) : cur_(x) {}
+//        iterator(const iterator &)=default;
+//
+//        ~iterator()=default;
+//
+//        value_type & operator*() noexcept { return *cur_; }
+//        iterator & operator++() noexcept { ++cur_; return *this; }
+//        iterator operator++(int) noexcept { auto forRet = *this; ++cur_; return forRet; }
+//        iterator & operator--() noexcept { --cur_; return *this; }
+//        iterator operator--(int) noexcept { auto forRet = *this; --cur_; return forRet; }
+//        value_type * operator->() noexcept { return cur_; }
+//        iterator & operator=(const iterator &) noexcept=default;
+//
+//        bool operator==(iterator & i) { return cur_ == i.cur_; }
+//        bool operator!=(iterator & i) { return cur_ != i.cur_; }
+//        bool operator==(const_iterator & i) { return cur_ == i.cur_; }
+//        bool operator!=(const_iterator & i) { return cur_ != i.cur_; }
+//#ifndef DEBUG
+//        private:
+//#endif
+//        value_type  * cur_ = nullptr;
+//    };
+//
+//    class const_iterator
+//    {
+//    public:
+//        const_iterator()=default;
+//        explicit const_iterator(value_type * x) : cur_(x) {}
+//        const_iterator(const const_iterator &)=default;
+//
+//        ~const_iterator()=default;
+//
+//        const value_type & operator*() const noexcept { return *cur_; }
+//        const_iterator & operator++() noexcept { ++cur_; return *this; }
+//        const_iterator operator++(int) noexcept { auto forRet = *this; ++cur_; return forRet; }
+//        const_iterator & operator--() noexcept { --cur_; return *this; }
+//        const_iterator operator--(int) noexcept { auto forRet = *this; --cur_; return forRet; }
+//        const value_type * operator->() const noexcept { return cur_; }
+//        const_iterator & operator=(const const_iterator &) noexcept=default;
+//
+//        bool operator==(const_iterator & i) { return cur_ == i.cur_; }
+//        bool operator!=(const_iterator & i) { return cur_ != i.cur_; }
+//        bool operator==(iterator & i) { return cur_ == i.cur_; }
+//        bool operator!=(iterator & i) { return cur_ != i.cur_; }
+//#ifndef DEBUG
+//        private:
+//#endif
+//        value_type * cur_ = nullptr;
+//    };
 
-    template<class TKey, class TValue>
-    friend bool operator!=(const FlatMap<TKey, TValue> & a, const FlatMap<TKey, TValue> & b);
-
-    /// @c Iterator and @c const @c iterator for a %FlatMap.
-    class iterator;
-    class const_iterator;
-
-    class iterator
-    {
-    public:
-        iterator()=default;
-        explicit iterator(value_type * x) : cur_(x) {}
-        iterator(const iterator &)=default;
-
-        ~iterator()=default;
-
-        value_type & operator*() noexcept { return *cur_; }
-        iterator & operator++() noexcept { ++cur_; return *this; }
-        iterator operator++(int) noexcept { auto forRet = *this; ++cur_; return forRet; }
-        iterator & operator--() noexcept { --cur_; return *this; }
-        iterator operator--(int) noexcept { auto forRet = *this; --cur_; return forRet; }
-        value_type * operator->() noexcept { return cur_; }
-        iterator & operator=(const iterator &) noexcept=default;
-
-        bool operator==(iterator & i) { return cur_ == i.cur_; }
-        bool operator!=(iterator & i) { return cur_ != i.cur_; }
-        bool operator==(const_iterator & i) { return cur_ == i.cur_; }
-        bool operator!=(const_iterator & i) { return cur_ != i.cur_; }
-#ifndef DEBUG
-    private:
-#endif
-        value_type  * cur_ = nullptr;
-    };
-
-    class const_iterator
-    {
-    public:
-        const_iterator()=default;
-        explicit const_iterator(value_type * x) : cur_(x) {}
-        const_iterator(const const_iterator &)=default;
-
-        ~const_iterator()=default;
-
-        const value_type & operator*() const noexcept { return *cur_; }
-        const_iterator & operator++() noexcept { ++cur_; return *this; }
-        const_iterator operator++(int) noexcept { auto forRet = *this; ++cur_; return forRet; }
-        const_iterator & operator--() noexcept { --cur_; return *this; }
-        const_iterator operator--(int) noexcept { auto forRet = *this; --cur_; return forRet; }
-        const value_type * operator->() const noexcept { return cur_; }
-        const_iterator & operator=(const const_iterator &) noexcept=default;
-
-        bool operator==(const_iterator & i) { return cur_ == i.cur_; }
-        bool operator!=(const_iterator & i) { return cur_ != i.cur_; }
-        bool operator==(iterator & i) { return cur_ == i.cur_; }
-        bool operator!=(iterator & i) { return cur_ != i.cur_; }
-#ifndef DEBUG
-    private:
-#endif
-        value_type * cur_ = nullptr;
-    };
+    typedef value_type * iterator;
+    typedef const value_type * const_iterator;
 
     /**
      * @brief @b iterators: \n\n
@@ -241,7 +238,7 @@ public:
      * Iterator is done in ascending order according to the keys.
      */
     const_iterator cbegin() noexcept { return const_iterator(_array); }
-          iterator  begin() noexcept { return iterator(_array); }
+    iterator begin() noexcept { return iterator(_array); }
 
     /**
      * @c end()/cend():
@@ -250,7 +247,13 @@ public:
      * Iterator is done in ascending order according to the keys.
      */
     const_iterator cend() noexcept { return const_iterator(_array + _length); }
-          iterator  end() noexcept { return iterator(_array + _length); }
+    iterator end() noexcept { return iterator(_array + _length); }
+
+    template<class TKey, class TValue>
+    friend bool operator==(const FlatMap<TKey, TValue> & a, const FlatMap<TKey, TValue> & b);
+
+    template<class TKey, class TValue>
+    friend bool operator!=(const FlatMap<TKey, TValue> & a, const FlatMap<TKey, TValue> & b);
 
 private:
     size_t static const _default_capacity = 8;
@@ -326,8 +329,8 @@ FlatMap<Key, Value>::~FlatMap()
 
 template <class Key, class Value>
 FlatMap<Key, Value>::FlatMap(const FlatMap& m) :
-    _length  (m._length),
-    _capacity(m._capacity)
+        _length  (m._length),
+        _capacity(m._capacity)
 {
     _array = new value_type[_capacity] ();
     std::copy(m._array, m._array + m._length, _array);
@@ -335,8 +338,8 @@ FlatMap<Key, Value>::FlatMap(const FlatMap& m) :
 
 template <class Key, class Value>
 FlatMap<Key, Value>::FlatMap(FlatMap&& m) noexcept :
-    _length  (m._length),
-    _capacity(m._capacity)
+        _length  (m._length),
+        _capacity(m._capacity)
 {
     _array    = m._array;
     m._array  = nullptr;
@@ -371,8 +374,8 @@ template <class Key, class Value>
 void FlatMap<Key, Value>::swap(FlatMap& m)
 {
     FlatMap buf = std::move(*this);
-          *this = std::move(m);
-              m = std::move(buf);
+    *this = std::move(m);
+    m = std::move(buf);
 }
 
 template <class Key, class Value>
@@ -408,15 +411,19 @@ bool FlatMap<Key, Value>::insert(const value_type & x)
 
     if (_length + 1 >= _capacity) {
         _capacity <<= 1;
+        auto* buf = new value_type[_capacity];
+        std::copy(_array, _array + index, buf);
+        std::copy(_array + index, _array + _length, buf + index + 1);
+        delete[] _array;
+        _array = buf;
     }
-    auto* buf = new value_type[_capacity];
-    std::copy(_array, _array + index, buf);
-    std::copy(_array + index, _array + _length, buf + index + 1);
+    else
+    {
+        std::copy_backward(_array + index, _array + _length, _array + _length + 1);
+    }
 
-    buf[index] = x;
-    delete[] _array;
-    _array = buf;
-
+    //???????????????????????????????????????????
+    _array[index] = x;
     ++_length;
     return true;
 }
@@ -492,15 +499,8 @@ bool operator==(const FlatMap<Key, Value>& a, const FlatMap<Key, Value>& b)
 {
     if (a._length == b._length)
     {
-        for (size_t i = 0; i < a._length; i++)
-        {
-            if ((a._array[i].first  != b._array[i].first) ||
-                (a._array[i].second != b._array[i].second))
-            {
-                return false;
-            }
-        }
-        return true;
+        // std::equal
+        return std::equal(a._array, a._array + a._length, b._array);
     }
     return false;
 }
