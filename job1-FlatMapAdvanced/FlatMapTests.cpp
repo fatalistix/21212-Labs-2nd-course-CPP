@@ -411,29 +411,29 @@ TEST(Swap, Swap)
     EXPECT_TRUE(flatmap_swap  == flatmap_copy1);
     EXPECT_TRUE(flatmap_swap1 == flatmap_copy);
 }
+//
+//TEST(Iterators, DefaultConstructor)
+//{
+//    FlatMap <std::string, int>::iterator it;
+//    FlatMap <std::string, int>::const_iterator cit;
+//    EXPECT_EQ(it.cur_, nullptr);
+//    EXPECT_EQ(cit.cur_, nullptr);
+//}
 
-TEST(Iterators, DefaultConstructor)
-{
-    FlatMap <std::string, int>::iterator it;
-    FlatMap <std::string, int>::const_iterator cit;
-    EXPECT_EQ(it.cur_, nullptr);
-    EXPECT_EQ(cit.cur_, nullptr);
-}
-
-TEST(Iterators, ParamConstructor)
-{
-    for (size_t i = 0; i < keys.size(); i++)
-    {
-        std::pair a(keys[i], values[i]);
-        FlatMap <std::string, int>::iterator it(&a);
-        FlatMap <std::string, int>::const_iterator cit(&a);
-        EXPECT_EQ(it.cur_->first, a.first);
-        EXPECT_EQ(it.cur_->second, a.second);
-
-        EXPECT_EQ(cit.cur_->first, a.first);
-        EXPECT_EQ(cit.cur_->second, a.second);
-    }
-}
+//TEST(Iterators, ParamConstructor)
+//{
+//    for (size_t i = 0; i < keys.size(); i++)
+//    {
+//        std::pair a(keys[i], values[i]);
+//        FlatMap <std::string, int>::iterator it(&a);
+//        FlatMap <std::string, int>::const_iterator cit(&a);
+//        EXPECT_EQ(it.cur_->first, a.first);
+//        EXPECT_EQ(it.cur_->second, a.second);
+//
+//        EXPECT_EQ(cit.cur_->first, a.first);
+//        EXPECT_EQ(cit.cur_->second, a.second);
+//    }
+//}
 
 TEST(Iterators, DereferenceOperator)
 {
