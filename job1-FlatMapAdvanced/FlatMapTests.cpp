@@ -16,8 +16,8 @@ std::vector<std::string> not_keys = {"5",    "x",    "not", "a ",  "key", "",   
 TEST(Constructors, DefaultConstructor)
 {
     FlatMap<std::string, std::vector<int>> flatmap;
-    EXPECT_EQ(std::vector<std::string>     (flatmap).size(), 0);
-    EXPECT_EQ(std::vector<std::vector<int>>(flatmap).size(), 0);
+    EXPECT_EQ(flatmap.GetVectorOfKeys()  .size(), 0);
+    EXPECT_EQ(flatmap.GetVectorOfValues().size(), 0);
 }
 
 TEST(Insert, InsertWithoutCollision)
@@ -29,8 +29,8 @@ TEST(Insert, InsertWithoutCollision)
     for (size_t i = 0; i < keys.size(); i++)
     {
         // Inserts all keys and values to both FlatMap and std::vector
-        EXPECT_TRUE(flatmap.insert(keys[i], values[i]));
-        buf.emplace_back(std::make_pair(keys[i], values[i]));
+        EXPECT_TRUE(flatmap.insert(std::make_pair(keys[i], values[i])));
+        buf.emplace_back(keys[i], values[i]);
 
         // Sorts std::vector by keys so these containers are similar
         sort(buf.begin(), buf.end(),
@@ -48,8 +48,8 @@ TEST(Insert, InsertWithoutCollision)
         }
 
         // Checks if keys and values are EQ
-        EXPECT_EQ(std::vector<std::string>(flatmap), buf_keys);
-        EXPECT_EQ(std::vector<int>        (flatmap), buf_values);
+        EXPECT_EQ(flatmap.GetVectorOfKeys(),   buf_keys);
+        EXPECT_EQ(flatmap.GetVectorOfValues(), buf_values);
     }
 }
 
@@ -62,8 +62,8 @@ TEST(Insert, InsertWithCollision)
     // Inserts all keys and values to both FlatMap and std::vector
     for (size_t i = 0; i < keys.size(); i++)
     {
-        EXPECT_TRUE(flatmap.insert(keys[i], values[i]));
-        buf.emplace_back(std::make_pair(keys[i], values[i]));
+        EXPECT_TRUE(flatmap.insert(std::make_pair(keys[i], values[i])));
+        buf.emplace_back(keys[i], values[i]);
     }
     // Sorts std::vector by keys so these containers are similar
     sort(buf.begin(), buf.end(),
@@ -84,18 +84,18 @@ TEST(Insert, InsertWithCollision)
     // Expect that changes nothing
     for (size_t i = 0; i < keys.size(); i++)
     {
-        EXPECT_FALSE(flatmap.insert(keys[i], values[i]));
-        EXPECT_EQ(std::vector<std::string>(flatmap), buf_keys);
-        EXPECT_EQ(std::vector<int>        (flatmap), buf_values);
+        EXPECT_FALSE(flatmap.insert(std::make_pair(keys[i], values[i])));
+        EXPECT_EQ(flatmap.GetVectorOfKeys(),   buf_keys);
+        EXPECT_EQ(flatmap.GetVectorOfValues(), buf_values);
     }
 
     // Checks inserting of keys with same values as in containers
     // Expect that changes nothing
     for (size_t i = 0; i < keys.size(); i++)
     {
-        EXPECT_FALSE(flatmap.insert(keys[i], values[values.size() - 1 - i]));
-        EXPECT_EQ(std::vector<std::string>(flatmap), buf_keys);
-        EXPECT_EQ(std::vector<int>        (flatmap), buf_values);
+        EXPECT_FALSE(flatmap.insert(std::make_pair(keys[i], values[values.size() - 1 - i])));
+        EXPECT_EQ(flatmap.GetVectorOfKeys(), buf_keys);
+        EXPECT_EQ(flatmap.GetVectorOfValues(), buf_values);
     }
 }
 
@@ -110,7 +110,7 @@ TEST(Erase, Clear)
         // Pushes first j + 1 elements
         for (size_t i = 0; i < j + 1; i++)
         {
-            EXPECT_TRUE(flatmap.insert(keys[i], values[i]));
+            EXPECT_TRUE(flatmap.insert(std::make_pair(keys[i], values[i])));
         }
         // Checks is cleared FlatMap EQ to FlatMap from default constructor
         flatmap.clear();
@@ -128,8 +128,8 @@ TEST(Erase, Erase)
     // Inserts all keys and values to both FlatMap and std::vector
     for (size_t i = 0; i < keys.size(); i++)
     {
-        EXPECT_TRUE(flatmap.insert(keys[i], values[i]));
-        buf.emplace_back(std::make_pair(keys[i], values[i]));
+        EXPECT_TRUE(flatmap.insert(std::make_pair(keys[i], values[i])));
+        buf.emplace_back(keys[i], values[i]);
     }
     // Sorts std::vector by keys so these containers are similar
     sort(buf.begin(), buf.end(),
@@ -137,7 +137,7 @@ TEST(Erase, Erase)
 
     // Creates std::vector of keys which will be erased
     // Helps to easily compare std::vector of pairs after erase and FlatMap
-    std::vector<std::string> keys_for_erase(flatmap);
+    std::vector<std::string> keys_for_erase(flatmap.GetVectorOfKeys());
 
     // Deletes i-key
     for (size_t i = 0; i < keys_for_erase.size(); i++)
@@ -164,8 +164,8 @@ TEST(Erase, Erase)
         }
 
         // Expect, that after removing they'll be EQ
-        EXPECT_EQ(std::vector<std::string>(f), buf_keys);
-        EXPECT_EQ(std::vector<int>        (f), buf_values);
+        EXPECT_EQ(f.GetVectorOfKeys(),   buf_keys);
+        EXPECT_EQ(f.GetVectorOfValues(), buf_values);
     }
 
     // Erases border elements in FlatMap
@@ -193,8 +193,8 @@ TEST(Erase, Erase)
     for (auto& c : not_keys)
     {
         EXPECT_FALSE(flatmap.erase(c));
-        EXPECT_EQ(std::vector<std::string>(flatmap), buf_keys);
-        EXPECT_EQ(std::vector<int>        (flatmap), buf_values);
+        EXPECT_EQ(flatmap.GetVectorOfKeys(), buf_keys);
+        EXPECT_EQ(flatmap.GetVectorOfValues(), buf_values);
     }
 }
 
@@ -206,7 +206,7 @@ TEST(Constructors, CopyConstructor)
 
     for (size_t i = 0; i < keys.size(); i++)
     {
-        flatmap.insert(keys[i], values[i]);
+        flatmap.insert(std::make_pair(keys[i], values[i]));
         EXPECT_EQ(flatmap, FlatMap(flatmap));
     }
 }
@@ -223,11 +223,11 @@ TEST(Constructors, MoveConstructor)
 
     for (size_t i = 0; i < keys.size(); i++)
     {
-        flatmap.insert(keys[i], values[i]);
+        flatmap.insert(std::make_pair(keys[i], values[i]));
         FlatMap<std::string, int> buf;
         for (size_t j = 0; j < i + 1; j++)
         {
-            buf.insert(keys[j], values[j]);
+            buf.insert(std::make_pair(keys[j], values[j]));
         }
         EXPECT_EQ(flatmap, FlatMap(std::move(buf)));
     }
@@ -243,7 +243,7 @@ TEST(Assignment, CopyAssignment)
 
     for (size_t i = 0; i < keys.size(); i++)
     {
-        flatmap.insert(keys[i], values[i]);
+        flatmap.insert(std::make_pair(keys[i], values[i]));
         EXPECT_EQ(flatmap, flatmap_comp = flatmap);
     }
 }
@@ -264,13 +264,13 @@ TEST(Assignment, MoveAssignment)
     for (size_t i = 0; i < keys.size(); i++)
     {
         // Inserts value to origin
-        flatmap.insert(keys[i], values[i]);
+        flatmap.insert(std::make_pair(keys[i], values[i]));
         // Creates move object
         FlatMap<std::string, int> flatmap_move;
         // Fills it
         for (size_t j = 0; j < i + 1; j++)
         {
-            flatmap_move.insert(keys[j], values[j]);
+            flatmap_move.insert(std::make_pair(keys[j], values[j]));
         }
         EXPECT_EQ(flatmap, flatmap_comp = std::move(flatmap_move));
     }
@@ -285,7 +285,7 @@ TEST(Contains, ContainsTrue)
     // if they are contained on every step of addition
     for (size_t i = 0; i < keys.size(); i++)
     {
-        EXPECT_TRUE(flatmap.insert(keys[i], values[i]));
+        EXPECT_TRUE(flatmap.insert(std::make_pair(keys[i], values[i])));
         for (size_t j = 0; j < i + 1; j++)
         {
             EXPECT_TRUE(flatmap.contains(keys[j]));
@@ -303,7 +303,7 @@ TEST(Contains, ContainsFalse)
     // And checks that method of keys that are not contained returns false
     for (size_t i = 0; i < keys.size(); i++)
     {
-        EXPECT_TRUE(flatmap.insert(keys[i], values[i]));
+        EXPECT_TRUE(flatmap.insert(std::make_pair(keys[i], values[i])));
         for (size_t j = i + 1; j < keys.size(); j++)
         {
             EXPECT_FALSE(flatmap.contains(keys[j]));
@@ -325,7 +325,7 @@ TEST(GetElement, NotSecure)
     // if they are contained on every step of addition
     for (size_t i = 0; i < keys.size(); i++)
     {
-        EXPECT_TRUE(flatmap.insert(keys[i], values[i]));
+        EXPECT_TRUE(flatmap.insert(std::make_pair(keys[i], values[i])));
         m.insert(std::make_pair(keys[i], values[i]));
         for (size_t j = 0; j < i + 1; j++)
         {
@@ -344,7 +344,7 @@ TEST(GetElement, Secure)
     // if they are contained on every step of addition
     for (size_t i = 0; i < keys.size(); i++)
     {
-        EXPECT_TRUE(flatmap.insert(keys[i], values[i]));
+        EXPECT_TRUE(flatmap.insert(std::make_pair(keys[i], values[i])));
         m.insert(std::make_pair(keys[i], values[i]));
         for (size_t j = 0; j < i + 1; j++)
         {
@@ -352,7 +352,7 @@ TEST(GetElement, Secure)
         }
         for (size_t j = i + 1; j < keys.size(); j++)
         {
-            EXPECT_THROW(flatmap.at(keys[j]), std::invalid_argument);
+            EXPECT_THROW(flatmap.at(keys[j]), std::out_of_range);
         }
     }
 }
@@ -361,7 +361,7 @@ TEST(Nodiscard, Empty)
 {
     FlatMap<std::string, int> flatmap;
     EXPECT_TRUE(flatmap.empty());
-    flatmap.insert(keys[0], values[0]);
+    flatmap.insert(std::make_pair(keys[0], values[0]));
     EXPECT_FALSE(flatmap.empty());
 }
 
@@ -369,7 +369,7 @@ TEST(Nodiscard, Size)
 {
     FlatMap<std::string, int> flatmap;
     EXPECT_EQ(flatmap.size(), 0);
-    flatmap.insert(keys[0], values[0]);
+    flatmap.insert(std::make_pair(keys[0], values[0]));
     EXPECT_NE(flatmap.size(), 0);
 }
 
@@ -379,15 +379,245 @@ TEST(EQ, EQ)
     for (size_t i = 0; i < keys.size(); i++)
     {
         EXPECT_TRUE(flatmap == flatmap_comp);
-        flatmap.insert(keys[i], values[i]);
+        flatmap.insert(std::make_pair(keys[i], values[i]));
         EXPECT_FALSE(flatmap == flatmap_comp);
-        flatmap_comp.insert(keys[i], values[i]);
+        flatmap_comp.insert(std::make_pair(keys[i], values[i]));
         EXPECT_TRUE(flatmap == flatmap_comp);
         flatmap.erase(keys[i]);
         EXPECT_FALSE(flatmap == flatmap_comp);
-        flatmap.insert(keys[i], values[i]);
+        flatmap.insert(std::make_pair(keys[i], values[i]));
         EXPECT_TRUE(flatmap == flatmap_comp);
     }
+}
+
+TEST(Swap, Swap)
+{
+    FlatMap <std::string, int> flatmap_swap, flatmap_swap1;
+    for (size_t i = 0; i < (keys.size() >> 1) << 1; i++)
+    {
+        flatmap_swap .insert(std::make_pair(keys[i],     values[i]));
+        flatmap_swap1.insert(std::make_pair(keys[i + 1], values[i + 1]));
+    }
+    FlatMap <std::string, int> flatmap_copy = flatmap_swap, flatmap_copy1 = flatmap_swap1;
+    flatmap_swap.swap(flatmap_swap1);
+    EXPECT_TRUE(flatmap_swap  == flatmap_copy1);
+    EXPECT_TRUE(flatmap_swap1 == flatmap_copy);
+    EXPECT_FALSE(flatmap_swap.erase(keys[0]));
+    EXPECT_TRUE (flatmap_swap.erase(keys[1]));
+
+    flatmap_copy  = flatmap_swap;
+    flatmap_copy1 = flatmap_swap1;
+    flatmap_swap1.swap(flatmap_swap);
+    EXPECT_TRUE(flatmap_swap  == flatmap_copy1);
+    EXPECT_TRUE(flatmap_swap1 == flatmap_copy);
+}
+//
+//TEST(Iterators, DefaultConstructor)
+//{
+//    FlatMap <std::string, int>::iterator it;
+//    FlatMap <std::string, int>::const_iterator cit;
+//    EXPECT_EQ(it.cur_, nullptr);
+//    EXPECT_EQ(cit.cur_, nullptr);
+//}
+
+//TEST(Iterators, ParamConstructor)
+//{
+//    for (size_t i = 0; i < keys.size(); i++)
+//    {
+//        std::pair a(keys[i], values[i]);
+//        FlatMap <std::string, int>::iterator it(&a);
+//        FlatMap <std::string, int>::const_iterator cit(&a);
+//        EXPECT_EQ(it.cur_->first, a.first);
+//        EXPECT_EQ(it.cur_->second, a.second);
+//
+//        EXPECT_EQ(cit.cur_->first, a.first);
+//        EXPECT_EQ(cit.cur_->second, a.second);
+//    }
+//}
+
+TEST(Iterators, DereferenceOperator)
+{
+    for (size_t i = 0; i < keys.size(); i++)
+    {
+        std::pair a(keys[i], values[i]);
+        FlatMap <std::string, int>::iterator it(&a);
+        FlatMap <std::string, int>::const_iterator cit(&a);
+
+        EXPECT_EQ(*it, a);
+        EXPECT_EQ(*cit, a);
+    }
+}
+
+TEST(Iterators, ArrowOperator)
+{
+    for (size_t i = 0; i < keys.size(); i++)
+    {
+        std::pair a(keys[i], values[i]);
+        FlatMap <std::string, int>::iterator it(&a);
+        FlatMap <std::string, int>::const_iterator cit(&a);
+
+        EXPECT_EQ(it->first, a.first);
+        EXPECT_EQ(it->second, a.second);
+        EXPECT_EQ(cit->first, a.first);
+        EXPECT_EQ(cit->second, a.second);
+    }
+}
+
+TEST(Iterators, CopyAssignment)
+{
+    for (size_t i = 0; i < keys.size(); i++)
+    {
+        std::pair a(keys[i], values[i]);
+        FlatMap <std::string, int>::iterator it1;
+        FlatMap <std::string, int>::iterator it2(&a);
+        FlatMap <std::string, int>::const_iterator cit1;
+        FlatMap <std::string, int>::const_iterator cit2(&a);
+        it1 = it2;
+        cit1 = cit2;
+        EXPECT_EQ(*it1, a);
+        EXPECT_EQ(*cit1, a);
+    }
+}
+
+TEST(Iterators, EQOperators)
+{
+    std::vector <std::pair<std::string, int>> buf;
+    for (size_t i = 0; i < keys.size(); i++)
+    {
+        buf.emplace_back(keys[i], values[i]);
+    }
+    for (size_t i = 0; i < buf.size(); i++)
+    {
+        for (size_t j = 0; j < buf.size(); j++)
+        {
+            FlatMap <std::string, int>::iterator it1(&buf[i]);
+            FlatMap <std::string, int>::iterator it2(&buf[j]);
+            FlatMap <std::string, int>::const_iterator cit1(&buf[i]);
+            FlatMap <std::string, int>::const_iterator cit2(&buf[j]);
+            if (i == j)
+            {
+                EXPECT_TRUE(it1 == it2);
+                EXPECT_TRUE(cit1 == cit2);
+                EXPECT_FALSE(it1 != it2);
+                EXPECT_FALSE(cit1 != cit2);
+                EXPECT_TRUE(it1 == cit2);
+                EXPECT_TRUE(cit1 == it2);
+                EXPECT_FALSE(it1 != cit2);
+                EXPECT_FALSE(cit1 != it2);
+            }
+            else
+            {
+                EXPECT_FALSE(it1 == it2);
+                EXPECT_FALSE(cit1 == cit2);
+                EXPECT_TRUE(it1 != it2);
+                EXPECT_TRUE(cit1 != cit2);
+                EXPECT_FALSE(it1 == cit2);
+                EXPECT_FALSE(cit1 == it2);
+                EXPECT_TRUE(it1 != cit2);
+                EXPECT_TRUE(cit1 != it2);
+            }
+        }
+    }
+}
+
+TEST(Iterators, Begin)
+{
+    FlatMap <std::string, int> flatmap;
+    for (size_t i = 0; i < keys.size(); i++)
+    {
+        EXPECT_TRUE(flatmap.insert(std::make_pair(keys[i], values[i])));
+    }
+    FlatMap <std::string, int>::iterator it = flatmap.begin();
+    FlatMap <std::string, int>::const_iterator cit = flatmap.cbegin();
+    EXPECT_EQ(*it, std::make_pair(flatmap.GetVectorOfKeys()[0], flatmap.GetVectorOfValues()[0]));
+    EXPECT_EQ(*cit, std::make_pair(flatmap.GetVectorOfKeys()[0], flatmap.GetVectorOfValues()[0]));
+}
+
+TEST(Iterators, Increments)
+{
+    FlatMap <std::string, int> flatmap;
+    for (size_t i = 0; i < keys.size(); i++)
+    {
+        EXPECT_TRUE(flatmap.insert(std::make_pair(keys[i], values[i])));
+    }
+    FlatMap <std::string, int>::iterator it = flatmap.begin();
+    FlatMap <std::string, int>::const_iterator cit = flatmap.cbegin();
+
+    for (size_t i = 0; i < flatmap.size() - 1; i++)
+    {
+        auto it1 = it++;
+        auto cit1 = cit++;
+        EXPECT_EQ(*it1, std::make_pair(flatmap.GetVectorOfKeys()[i], flatmap.GetVectorOfValues()[i]));
+        EXPECT_EQ(*cit1, std::make_pair(flatmap.GetVectorOfKeys()[i], flatmap.GetVectorOfValues()[i]));
+        EXPECT_EQ(*it, std::make_pair(flatmap.GetVectorOfKeys()[i+1], flatmap.GetVectorOfValues()[i+1]));
+        EXPECT_EQ(*cit, std::make_pair(flatmap.GetVectorOfKeys()[i+1], flatmap.GetVectorOfValues()[i+1]));
+    }
+    EXPECT_EQ(*it, std::make_pair(flatmap.GetVectorOfKeys()[flatmap.size() - 1], flatmap.GetVectorOfValues()[flatmap.size() - 1]));
+    EXPECT_EQ(*cit, std::make_pair(flatmap.GetVectorOfKeys()[flatmap.size() - 1], flatmap.GetVectorOfValues()[flatmap.size() - 1]));
+    it = flatmap.begin();
+    cit = flatmap.cbegin();
+
+    for (size_t i = 0; i < flatmap.size() - 1; i++)
+    {
+        auto it1 = ++it;
+        auto cit1 = ++cit;
+        EXPECT_EQ(*it1, std::make_pair(flatmap.GetVectorOfKeys()[i+1], flatmap.GetVectorOfValues()[i+1]));
+        EXPECT_EQ(*cit1, std::make_pair(flatmap.GetVectorOfKeys()[i+1], flatmap.GetVectorOfValues()[i+1]));
+        EXPECT_EQ(*it, std::make_pair(flatmap.GetVectorOfKeys()[i+1], flatmap.GetVectorOfValues()[i+1]));
+        EXPECT_EQ(*cit, std::make_pair(flatmap.GetVectorOfKeys()[i+1], flatmap.GetVectorOfValues()[i+1]));
+    }
+}
+
+TEST(Iterators, IncrementsAndDecrements)
+{
+    FlatMap <std::string, int> flatmap;
+    for (size_t i = 0; i < keys.size(); i++)
+    {
+        EXPECT_TRUE(flatmap.insert(std::make_pair(keys[i], values[i])));
+    }
+    FlatMap <std::string, int>::iterator it = flatmap.begin();
+    FlatMap <std::string, int>::const_iterator cit = flatmap.cbegin();
+
+    for (size_t i = 0; i < flatmap.size() - 1; i++)
+    {
+        ++it; ++cit;
+        auto it1 = --it;
+        auto cit1 = --cit;
+        ++it; ++cit;
+        EXPECT_EQ(*it1, std::make_pair(flatmap.GetVectorOfKeys()[i], flatmap.GetVectorOfValues()[i]));
+        EXPECT_EQ(*cit1, std::make_pair(flatmap.GetVectorOfKeys()[i], flatmap.GetVectorOfValues()[i]));
+        EXPECT_EQ(*it, std::make_pair(flatmap.GetVectorOfKeys()[i+1], flatmap.GetVectorOfValues()[i+1]));
+        EXPECT_EQ(*cit, std::make_pair(flatmap.GetVectorOfKeys()[i+1], flatmap.GetVectorOfValues()[i+1]));
+    }
+    EXPECT_EQ(*it, std::make_pair(flatmap.GetVectorOfKeys()[flatmap.size() - 1], flatmap.GetVectorOfValues()[flatmap.size() - 1]));
+    EXPECT_EQ(*cit, std::make_pair(flatmap.GetVectorOfKeys()[flatmap.size() - 1], flatmap.GetVectorOfValues()[flatmap.size() - 1]));
+    it = flatmap.begin();
+    cit = flatmap.cbegin();
+
+    for (size_t i = 0; i < flatmap.size() - 1; i++)
+    {
+        ++it, ++cit;
+        auto it1 = it--;
+        auto cit1 = cit--;
+        ++it, ++cit;
+        EXPECT_EQ(*it1, std::make_pair(flatmap.GetVectorOfKeys()[i+1], flatmap.GetVectorOfValues()[i+1]));
+        EXPECT_EQ(*cit1, std::make_pair(flatmap.GetVectorOfKeys()[i+1], flatmap.GetVectorOfValues()[i+1]));
+        EXPECT_EQ(*it, std::make_pair(flatmap.GetVectorOfKeys()[i+1], flatmap.GetVectorOfValues()[i+1]));
+        EXPECT_EQ(*cit, std::make_pair(flatmap.GetVectorOfKeys()[i+1], flatmap.GetVectorOfValues()[i+1]));
+    }
+}
+
+TEST(Iterators, End)
+{
+    FlatMap <std::string, int> flatmap;
+    for (size_t i = 0; i < keys.size(); i++)
+    {
+        EXPECT_TRUE(flatmap.insert(std::make_pair(keys[i], values[i])));
+    }
+    FlatMap <std::string, int>::iterator it = flatmap.end();
+    FlatMap <std::string, int>::const_iterator cit = flatmap.cend();
+    EXPECT_EQ(*(--it), std::make_pair(flatmap.GetVectorOfKeys()[flatmap.size()-1], flatmap.GetVectorOfValues()[flatmap.size()-1]));
+    EXPECT_EQ(*(--cit), std::make_pair(flatmap.GetVectorOfKeys()[flatmap.size()-1], flatmap.GetVectorOfValues()[flatmap.size()-1]));
 }
 
 int main(int argc, char* argv[])

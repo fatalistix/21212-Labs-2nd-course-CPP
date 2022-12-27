@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# xf's addons
+cmake-build-debug
+.*
+!/.gitignore
+
