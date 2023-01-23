@@ -13,6 +13,10 @@ enum COMMAND_TYPE
 
 bool IsNumber(const std::string & s)
 {
+    if (s == "-")
+    {
+        return false;
+    }
     if (std::ranges::any_of(s.begin() + (s[0] == '-'), s.end(),
                             [](char c) {return !std::isdigit(c);}))
     {
@@ -54,7 +58,7 @@ void CommandManager::Debug(const std::string & keyword, std::stringstream & buff
             }
             else
             {
-                command_ = it->second;
+                command_ = it->second.get();
             }
             command_->Debug(buffer, in, keywords_);
             return;
@@ -78,7 +82,7 @@ void CommandManager::Execute(const std::string & keyword, std::stringstream & bu
         }
         case CT_COMMAND:
         {
-            command_ = createdCommands_.find(keyword)->second;
+            command_ = createdCommands_.find(keyword)->second.get();
             command_->Execute(forthStack, buffer, out);
         }
     }
@@ -94,7 +98,7 @@ void CommandManager::Pass(const std::string & keyword, std::stringstream & buffe
         }
         case CT_COMMAND:
         {
-            command_ = createdCommands_.find(keyword)->second;
+            command_ = createdCommands_.find(keyword)->second.get();
             command_->Pass(buffer);
         }
     }

@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/player">
+        <file>images/NinjaPlayer400x400.png</file>
+    </qresource>
+    <qresource prefix="/surround">
+        <file>images/Background1920x1080.jpg</file>
+        <file>images/green.png</file>
+    </qresource>
+</RCC>

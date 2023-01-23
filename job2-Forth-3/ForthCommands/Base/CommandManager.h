@@ -1,18 +1,22 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <sstream>
 #include <stack>
 #include <string>
 #include <vector>
 
-#include "Containers/SingletonHolder__Heap.h"
+//#include "Containers/SingletonHolder__Heap.h"
 #include "ForthCommands/Base/Singleton__CommandFactory.h"
 #include "ForthCommands/Base/Command.h"
 
 class CommandManager
 {
 public:
+    CommandManager()=default;
+    ~CommandManager()=default;
+
     CommandManager(const CommandManager &)=delete;
     CommandManager & operator=(const CommandManager &)=delete;
 
@@ -25,20 +29,12 @@ public:
     void Pass(const std::string & keyword, std::stringstream & buffer);
 
 private:
-    friend SingletonHolder<CommandManager>;
+//    friend SingletonHolder<CommandManager>;
 
-    CommandManager()=default;
-    ~CommandManager()
-    {
-        for (auto & c : createdCommands_)
-        {
-            delete c.second;
-        }
-    };
-
-    std::map<std::string, Command *> createdCommands_;
+//    std::map<std::string, Command *> createdCommands_;  //unique_ptr
+    std::map<std::string, std::unique_ptr<Command>> createdCommands_;
     Command * command_ = nullptr;
     std::stack<std::string> keywords_;
 };
 
-typedef SingletonHolder<CommandManager> ForthCommandManager;
+//typedef SingletonHolder<CommandManager> ForthCommandManager;
