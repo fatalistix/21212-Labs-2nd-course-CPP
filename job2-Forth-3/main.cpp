@@ -1,33 +1,35 @@
-#include "Streams/CurrentStreams.h"
+#include <iostream>
 #include "Forth.h"
 
 int main()
 {
-    inputStream.exceptions(std::ios::badbit | std::ios::failbit);
+    std::cin.exceptions(std::ios::badbit | std::ios::failbit);
+    Forth ForthInterpreter;
     try
     {
         while (true)
         {
-            outputStream << "> " << std::flush;
+            std::cout << "> " << std::flush;
 
-            if (!ForthInterpreter::Instance().ReadAndExecute(inputStream, outputStream))
+            if (!ForthInterpreter.ReadAndExecute(std::cin, std::cout))
             {
                 break;
             }
         }
+
     }
     catch (std::istream::failure &)
     {
-        outputStream << "< Error reading from stream/file" << std::endl;
+        std::cout << "< Input/output streams error" << std::endl;
         return 0;
     }
-    catch (std::ostream::failure &)
-    {
-        outputStream << "< Error writing to stream/file" << std::endl;
-        return 0;
-    }
-
-    outputStream << "< Exited without errors" << std::endl;
+//    catch (std::ostream::failure &)
+//    {
+//        std::cout << "< Error writing to stream/file" << std::endl;
+//        return 0;
+//    }
+    int * a = new int[100];
+    std::cout << "< Exited without errors" << std::endl;
     return 0;
 }
 

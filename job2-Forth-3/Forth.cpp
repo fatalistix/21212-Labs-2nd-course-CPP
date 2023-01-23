@@ -6,34 +6,34 @@ bool Forth::ReadAndExecute(std::istream & in,std::ostream & out)
     getline(in, inputKeyword);
     if (inputKeyword == "exit") { return false; }
 
-    buffer.clear();
-    buffer.str(inputKeyword);
-    buffer.seekg(0);
+    buffer_.clear();
+    buffer_.str(inputKeyword);
+    buffer_.seekg(0);
 
     try
     {
-        buffer >> inputKeyword;
+        buffer_ >> inputKeyword;
         if (inputKeyword.empty()) { return true; }
-
-        do
-        { ForthCommandManager::Instance().Debug(inputKeyword, buffer, in); }
-        while (buffer >> inputKeyword);
 
         out << "< " << std::flush;
 
+        do
+        { forthCommandManager_.Debug(inputKeyword, buffer_, in); }
+        while (buffer_ >> inputKeyword);
+
         {
-            std::string temp = buffer.str();
-            buffer.clear();
-            buffer.str(temp);
-            buffer.seekg(0);
+            std::string temp = buffer_.str();
+            buffer_.clear();
+            buffer_.str(temp);
+            buffer_.seekg(0);
         }
 
-        while (buffer >> inputKeyword)
-        { ForthCommandManager::Instance().Execute(inputKeyword, buffer, forthStack_, out); }
+        while (buffer_ >> inputKeyword)
+        { forthCommandManager_.Execute(inputKeyword, buffer_, forthStack_, out); }
     }
     catch (std::invalid_argument & e)
     {
-        out << "< " << e.what() << std::endl;
+        out << " " << e.what() << std::endl;
         return true;
     }
     catch (std::runtime_error & e)

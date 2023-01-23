@@ -11,9 +11,9 @@ public:
     Add()=default;
     ~Add() override=default;
 
-    void Debug(std::stringstream &, std::istream &, std::stack<std::string> &) override {};
-    void Execute(std::stack<int> &, std::stringstream &, std::ostream &) override;
-    void Pass(std::stringstream &) override {};
+    void Debug(CommandManager &, std::stringstream &, std::istream &, std::stack<std::string> &) override {};
+    void Execute(CommandManager &, std::stack<int> &, std::stringstream &, std::ostream &) override;
+    void Pass(CommandManager &, std::stringstream &) override {};
 };
 
 class Mul : public Command
@@ -22,9 +22,9 @@ public:
     Mul()=default;
     ~Mul() override=default;
 
-    void Debug  (std::stringstream &, std::istream &, std::stack<std::string> &) override {};
-    void Execute(std::stack<int> &, std::stringstream &, std::ostream &) override;
-    void Pass(std::stringstream &) override {};
+    void Debug(CommandManager &, std::stringstream &, std::istream &, std::stack<std::string> &) override {};
+    void Execute(CommandManager &, std::stack<int> &, std::stringstream &, std::ostream &) override;
+    void Pass(CommandManager &, std::stringstream &) override {};
 };
 
 class Sub : public Command
@@ -33,9 +33,9 @@ public:
     Sub()=default;
     ~Sub() override=default;
 
-    void Debug  (std::stringstream &, std::istream &, std::stack<std::string> &) override {};
-    void Execute(std::stack<int> &, std::stringstream &, std::ostream &) override;
-    void Pass(std::stringstream &) override {};
+    void Debug(CommandManager &, std::stringstream &, std::istream &, std::stack<std::string> &) override {};
+    void Execute(CommandManager &, std::stack<int> &, std::stringstream &, std::ostream &) override;
+    void Pass(CommandManager &, std::stringstream &) override {};
 };
 
 class Div : public Command
@@ -44,9 +44,9 @@ public:
     Div()=default;
     ~Div() override=default;
 
-    void Debug  (std::stringstream &, std::istream &, std::stack<std::string> &) override {};
-    void Execute(std::stack<int> &, std::stringstream &, std::ostream &) override;
-    void Pass(std::stringstream &) override {};
+    void Debug(CommandManager &, std::stringstream &, std::istream &, std::stack<std::string> &) override {};
+    void Execute(CommandManager &, std::stack<int> &, std::stringstream &, std::ostream &) override;
+    void Pass(CommandManager &, std::stringstream &) override {};
 };
 
 class Mod : public Command
@@ -55,9 +55,9 @@ public:
     Mod()=default;
     ~Mod() override=default;
 
-    void Debug  (std::stringstream &, std::istream &, std::stack<std::string> &) override {};
-    void Execute(std::stack<int> &, std::stringstream &, std::ostream &) override;
-    void Pass(std::stringstream &) override {};
+    void Debug(CommandManager &, std::stringstream &, std::istream &, std::stack<std::string> &) override {};
+    void Execute(CommandManager &, std::stack<int> &, std::stringstream &, std::ostream &) override;
+    void Pass(CommandManager &, std::stringstream &) override {};
 };
 
 

@@ -6,6 +6,4 @@
 #include "../../Containers/Factory.h"
 #include "Command.h"
 
-class Command;
-
 typedef SingletonHolder<Factory<Command, std::string>> CommandFactory;

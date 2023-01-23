@@ -2,7 +2,7 @@
 
 #include "Base/Function__CheckStack.h"
 
-void More::Execute(std::stack<int> & stack, std::stringstream &,
+void More::Execute(CommandManager &, std::stack<int> & stack, std::stringstream &,
                      std::ostream &)
 {
     CheckStack(stack, 2);
@@ -13,7 +13,7 @@ void More::Execute(std::stack<int> & stack, std::stringstream &,
     stack.push(subTop > top ? -1 : 0);
 }
 
-void Less::Execute(std::stack<int> & stack, std::stringstream &,
+void Less::Execute(CommandManager &, std::stack<int> & stack, std::stringstream &,
                      std::ostream &)
 {
     CheckStack(stack, 2);
@@ -24,7 +24,7 @@ void Less::Execute(std::stack<int> & stack, std::stringstream &,
     stack.push(subTop < top ? -1 : 0);
 }
 
-void Equal::Execute(std::stack<int> & stack, std::stringstream &,
+void Equal::Execute(CommandManager &, std::stack<int> & stack, std::stringstream &,
                       std::ostream &)
 {
     CheckStack(stack, 2);
@@ -35,7 +35,7 @@ void Equal::Execute(std::stack<int> & stack, std::stringstream &,
     stack.push(subTop == top ? -1 : 0);
 }
 
-void And::Execute(std::stack<int> & stack, std::stringstream &,
+void And::Execute(CommandManager &, std::stack<int> & stack, std::stringstream &,
                     std::ostream &)
 {
     CheckStack(stack, 2);
@@ -46,7 +46,7 @@ void And::Execute(std::stack<int> & stack, std::stringstream &,
     stack.push(subTop & top);
 }
 
-void Or::Execute(std::stack<int> & stack, std::stringstream &,
+void Or::Execute(CommandManager &, std::stack<int> & stack, std::stringstream &,
                    std::ostream &)
 {
     CheckStack(stack, 2);
@@ -57,7 +57,7 @@ void Or::Execute(std::stack<int> & stack, std::stringstream &,
     stack.push(subTop | top);
 }
 
-void Invert::Execute(std::stack<int> & stack, std::stringstream &,
+void Invert::Execute(CommandManager &, std::stack<int> & stack, std::stringstream &,
                        std::ostream &)
 {
     if (stack.empty())

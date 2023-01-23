@@ -1,8 +1,8 @@
 #include "Conditional.h"
 
-#include "../CommandManager.h"
+#include "Base/CommandManager.h"
 
-void If::Debug(std::stringstream & buffer, std::istream & in,
+void If::Debug(CommandManager & manager, std::stringstream & buffer, std::istream & in,
                std::stack<std::string> & keywords)
 {
     std::string currentKeyword;
@@ -18,7 +18,7 @@ void If::Debug(std::stringstream & buffer, std::istream & in,
             buffer.str(forReplace);
             buffer.seekg(long(pos));
         }
-        ForthCommandManager::Instance().Debug(currentKeyword, buffer, in);
+        manager.Debug(currentKeyword, buffer, in);
         if (currentKeyword == "else" || currentKeyword == "then")
         {
             break;
@@ -26,7 +26,7 @@ void If::Debug(std::stringstream & buffer, std::istream & in,
     }
 }
 
-void If::Execute(std::stack<int> & stack, std::stringstream & buffer, std::ostream & out)
+void If::Execute(CommandManager & manager, std::stack<int> & stack, std::stringstream & buffer, std::ostream & out)
 {
     if (stack.empty())
     {
@@ -38,13 +38,13 @@ void If::Execute(std::stack<int> & stack, std::stringstream & buffer, std::ostre
         std::string currentKeyword;
         while (buffer >> currentKeyword && currentKeyword != "else" && currentKeyword != "then")
         {
-            ForthCommandManager::Instance().Execute(currentKeyword, buffer, stack, out);
+            manager.Execute(currentKeyword, buffer, stack, out);
         }
         if (currentKeyword == "else")
         {
             while (buffer >> currentKeyword && currentKeyword != "then")
             {
-                ForthCommandManager::Instance().Pass(currentKeyword, buffer);
+                manager.Pass(currentKeyword, buffer);
             }
         }
         buffer >> currentKeyword;
@@ -55,30 +55,30 @@ void If::Execute(std::stack<int> & stack, std::stringstream & buffer, std::ostre
         std::string currentKeyword;
         while (buffer >> currentKeyword && currentKeyword != "else" && currentKeyword != "then")
         {
-            ForthCommandManager::Instance().Pass(currentKeyword, buffer);
+            manager.Pass(currentKeyword, buffer);
         }
         if (currentKeyword == "else")
         {
             while (buffer >> currentKeyword && currentKeyword != "then")
             {
-                ForthCommandManager::Instance().Execute(currentKeyword, buffer, stack, out);
+                manager.Execute(currentKeyword, buffer, stack, out);
             }
         }
         buffer >> currentKeyword;
     }
 }
 
-void If::Pass(std::stringstream & buffer)
+void If::Pass(CommandManager & manager, std::stringstream & buffer)
 {
     std::string currentKeyword;
     while (buffer >> currentKeyword && currentKeyword != "then")
     {
-        ForthCommandManager::Instance().Pass(currentKeyword, buffer);
+        manager.Pass(currentKeyword, buffer);
     }
     buffer >> currentKeyword;
 }
 
-void Else::Debug(std::stringstream & buffer, std::istream & in,
+void Else::Debug(CommandManager & manager, std::stringstream & buffer, std::istream & in,
                  std::stack<std::string> & keywords)
 {
     if (keywords.top() != "if")
@@ -102,7 +102,7 @@ void Else::Debug(std::stringstream & buffer, std::istream & in,
                 buffer.str(forReplace);
                 buffer.seekg(long(pos));
             }
-            ForthCommandManager::Instance().Debug(currentKeyword, buffer, in);
+            manager.Debug(currentKeyword, buffer, in);
             if (currentKeyword == "then")
             {
                 break;
@@ -111,9 +111,9 @@ void Else::Debug(std::stringstream & buffer, std::istream & in,
     }
 }
 
-void Else::Execute(std::stack<int> &, std::stringstream &, std::ostream &) {}
+void Else::Execute(CommandManager &, std::stack<int> &, std::stringstream &, std::ostream &) {}
 
-void Then::Debug(std::stringstream & buffer, std::istream & in,
+void Then::Debug(CommandManager &, std::stringstream & buffer, std::istream & in,
                  std::stack<std::string> & keywords)
 {
     if (keywords.top() == "if" || keywords.top() == "else")
@@ -142,4 +142,4 @@ void Then::Debug(std::stringstream & buffer, std::istream & in,
     }
 }
 
-void Then::Execute(std::stack<int> &, std::stringstream &, std::ostream &) {}
+void Then::Execute(CommandManager &, std::stack<int> &, std::stringstream &, std::ostream &) {}

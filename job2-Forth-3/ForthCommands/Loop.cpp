@@ -1,9 +1,9 @@
 #include "Loop.h"
 
-#include "../CommandManager.h"
+#include "Base/CommandManager.h"
 #include "Base/Function__CheckStack.h"
 
-void Do::Debug(std::stringstream & buffer, std::istream & in, std::stack<std::string> & keywords)
+void Do::Debug(CommandManager & manager, std::stringstream & buffer, std::istream & in, std::stack<std::string> & keywords)
 {
     std::string currentKeyword;
     keywords.emplace("do");
@@ -18,7 +18,7 @@ void Do::Debug(std::stringstream & buffer, std::istream & in, std::stack<std::st
             buffer.str(forReplace);
             buffer.seekg(long(pos));
         }
-        ForthCommandManager::Instance().Debug(currentKeyword, buffer, in);
+        manager.Debug(currentKeyword, buffer, in);
         if (currentKeyword == "loop")
         {
             break;
@@ -26,7 +26,7 @@ void Do::Debug(std::stringstream & buffer, std::istream & in, std::stack<std::st
     }
 }
 
-void Do::Execute(std::stack<int> & stack, std::stringstream & buffer, std::ostream & out)
+void Do::Execute(CommandManager & manager, std::stack<int> & stack, std::stringstream & buffer, std::ostream & out)
 {
     CheckStack(stack, 2);
     int i_start = stack.top();
@@ -51,7 +51,7 @@ void Do::Execute(std::stack<int> & stack, std::stringstream & buffer, std::ostre
             }
             if (s == "do")
             {
-                ForthCommandManager::Instance().Pass(s, buffer);
+                manager.Pass(s, buffer);
             }
         }
         buffer.str(forReplace);
@@ -59,7 +59,7 @@ void Do::Execute(std::stack<int> & stack, std::stringstream & buffer, std::ostre
 
         while (buffer >> s && s != "loop")
         {
-            ForthCommandManager::Instance().Execute(s, buffer, stack, out);
+            manager.Execute(s, buffer, stack, out);
         }
 
         buffer.str(original);
@@ -67,22 +67,22 @@ void Do::Execute(std::stack<int> & stack, std::stringstream & buffer, std::ostre
     }
     while (buffer >> s && s != "loop")
     {
-        ForthCommandManager::Instance().Pass(s, buffer);
+        manager.Pass(s, buffer);
     }
     buffer >> s;
 }
 
-void Do::Pass(std::stringstream &buffer)
+void Do::Pass(CommandManager & manager, std::stringstream &buffer)
 {
     std::string s;
     while (buffer >> s && s != "loop")
     {
-        ForthCommandManager::Instance().Pass(s, buffer);
+        manager.Pass(s, buffer);
     }
     buffer >> s;
 }
 
-void Loop::Debug(std::stringstream & buffer, std::istream & in, std::stack<std::string> & keywords)
+void Loop::Debug(CommandManager &, std::stringstream & buffer, std::istream & in, std::stack<std::string> & keywords)
 {
     if (keywords.top() != "do")
     {
@@ -111,4 +111,4 @@ void Loop::Debug(std::stringstream & buffer, std::istream & in, std::stack<std::
     }
 }
 
-void Loop::Execute(std::stack<int> &, std::stringstream &, std::ostream &) {}
+void Loop::Execute(CommandManager &, std::stack<int> &, std::stringstream &, std::ostream &) {}

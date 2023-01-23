@@ -1,6 +1,6 @@
 #include "OutputOperators.h"
 
-void PrintTopNumber::Execute(std::stack<int> & fStack_, std::stringstream &,
+void PrintTopNumber::Execute(CommandManager &, std::stack<int> & fStack_, std::stringstream &,
                                std::ostream & out)
 {
     if (fStack_.empty())
@@ -13,7 +13,7 @@ void PrintTopNumber::Execute(std::stack<int> & fStack_, std::stringstream &,
     out << std::to_string(top) << ' ';
 }
 
-void Emit::Execute(std::stack<int> & fStack_, std::stringstream &,
+void Emit::Execute(CommandManager &, std::stack<int> & fStack_, std::stringstream &,
                      std::ostream & out)
 {
     if (fStack_.empty())
@@ -26,13 +26,13 @@ void Emit::Execute(std::stack<int> & fStack_, std::stringstream &,
     out << char(top);
 }
 
-void Carriage::Execute(std::stack<int> &, std::stringstream &,
+void Carriage::Execute(CommandManager &, std::stack<int> &, std::stringstream &,
                          std::ostream & out)
 {
     out << '\n';
 }
 
-void PrintString::Debug(std::stringstream & buffer, std::istream &, std::stack<std::string> &)
+void PrintString::Debug(CommandManager &, std::stringstream & buffer, std::istream &, std::stack<std::string> &)
 {
     if (buffer.get() == EOF)
     {
@@ -46,7 +46,7 @@ void PrintString::Debug(std::stringstream & buffer, std::istream &, std::stack<s
     buffer.get();
 }
 
-void PrintString::Execute(std::stack<int> &, std::stringstream & buffer,
+void PrintString::Execute(CommandManager &, std::stack<int> &, std::stringstream & buffer,
                             std::ostream & out)
 {
     if (buffer.get() == EOF)
@@ -54,7 +54,7 @@ void PrintString::Execute(std::stack<int> &, std::stringstream & buffer,
         throw std::runtime_error(".\" ?");
     }
 
-    while (buffer.peek() != '\n' && buffer.peek() != '\"')
+    while (buffer.peek() != EOF && buffer.peek() != '\n' && buffer.peek() != '\"')
     {
         out << char(buffer.get());
     }

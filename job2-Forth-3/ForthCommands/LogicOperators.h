@@ -12,9 +12,9 @@ public:
     More()=default;
     ~More() override=default;
 
-    void Debug(std::stringstream &, std::istream &, std::stack<std::string> &) override {};
-    void Execute(std::stack<int> &, std::stringstream &, std::ostream &) override;
-    void Pass(std::stringstream &) override {};
+    void Debug(CommandManager &, std::stringstream &, std::istream &, std::stack<std::string> &) override {};
+    void Execute(CommandManager &, std::stack<int> &, std::stringstream &, std::ostream &) override;
+    void Pass(CommandManager &, std::stringstream &) override {};
 };
 
 class Less : public Command
@@ -23,9 +23,9 @@ public:
     Less()=default;
     ~Less() override=default;
 
-    void Debug(std::stringstream &, std::istream &, std::stack<std::string> &) override {};
-    void Execute(std::stack<int> &, std::stringstream &, std::ostream &) override;
-    void Pass(std::stringstream &) override {};
+    void Debug(CommandManager &, std::stringstream &, std::istream &, std::stack<std::string> &) override {};
+    void Execute(CommandManager &, std::stack<int> &, std::stringstream &, std::ostream &) override;
+    void Pass(CommandManager &, std::stringstream &) override {};
 };
 
 class Equal : public Command
@@ -34,9 +34,9 @@ public:
     Equal()=default;
     ~Equal() override=default;
 
-    void Debug(std::stringstream &, std::istream &, std::stack<std::string> &) override {};
-    void Execute(std::stack<int> &, std::stringstream &, std::ostream &) override;
-    void Pass(std::stringstream &) override {};
+    void Debug(CommandManager &, std::stringstream &, std::istream &, std::stack<std::string> &) override {};
+    void Execute(CommandManager &, std::stack<int> &, std::stringstream &, std::ostream &) override;
+    void Pass(CommandManager &, std::stringstream &) override {};
 };
 
 class And : public Command
@@ -45,9 +45,9 @@ public:
     And()=default;
     ~And() override=default;
 
-    void Debug(std::stringstream &, std::istream &, std::stack<std::string> &) override {};
-    void Execute(std::stack<int> &, std::stringstream &, std::ostream &) override;
-    void Pass(std::stringstream &) override {};
+    void Debug(CommandManager &, std::stringstream &, std::istream &, std::stack<std::string> &) override {};
+    void Execute(CommandManager &, std::stack<int> &, std::stringstream &, std::ostream &) override;
+    void Pass(CommandManager &, std::stringstream &) override {};
 };
 
 class Or : public Command
@@ -56,9 +56,9 @@ public:
     Or()=default;
     ~Or() override=default;
 
-    void Debug(std::stringstream &, std::istream &, std::stack<std::string> &) override {};
-    void Execute(std::stack<int> &, std::stringstream &, std::ostream &) override;
-    void Pass(std::stringstream &) override {};
+    void Debug(CommandManager &, std::stringstream &, std::istream &, std::stack<std::string> &) override {};
+    void Execute(CommandManager &, std::stack<int> &, std::stringstream &, std::ostream &) override;
+    void Pass(CommandManager &, std::stringstream &) override {};
 };
 
 class Invert : public Command
@@ -67,9 +67,9 @@ public:
     Invert()=default;
     ~Invert() override=default;
 
-    void Debug(std::stringstream &, std::istream &, std::stack<std::string> &) override {};
-    void Execute(std::stack<int> &, std::stringstream &, std::ostream &) override;
-    void Pass(std::stringstream &) override {};
+    void Debug(CommandManager &, std::stringstream &, std::istream &, std::stack<std::string> &) override {};
+    void Execute(CommandManager &, std::stack<int> &, std::stringstream &, std::ostream &) override;
+    void Pass(CommandManager &, std::stringstream &) override {};
 };
 
 namespace

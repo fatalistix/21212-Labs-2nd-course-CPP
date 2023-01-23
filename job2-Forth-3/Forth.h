@@ -6,15 +6,17 @@
 #include <stack>
 #include <string>
 
-#include "Containers/SingletonHolder__Heap.h"
-#include "CommandManager.h"
+#include "ForthCommands/Base/CommandManager.h"
 
 
 class Forth
 {
 public:
-    Forth(const Forth &)=delete;
-    Forth & operator=(const Forth &)=delete;
+    Forth()=default;
+    ~Forth()=default;
+
+    Forth(const Forth &) = delete;
+    Forth & operator=(const Forth &) = delete;
 
     bool ReadAndExecute(std::istream &, std::ostream &);
 
@@ -24,13 +26,9 @@ public:
 #endif
 
 private:
-    friend SingletonHolder<Forth>;
-
-    Forth()=default;
-    ~Forth()=default;
+    //xf: CommandManager???
+    CommandManager forthCommandManager_;
 
     std::stack<int> forthStack_;
-    std::stringstream buffer;
+    std::stringstream buffer_;
 };
-
-typedef SingletonHolder<Forth> ForthInterpreter;

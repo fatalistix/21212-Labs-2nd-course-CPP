@@ -2,7 +2,7 @@
 
 #include "Base/Function__CheckStack.h"
 
-void Add::Execute(std::stack<int> & stack, std::stringstream &,
+void Add::Execute(CommandManager &, std::stack<int> & stack, std::stringstream &,
                     std::ostream &)
 {
     CheckStack(stack, 2);
@@ -13,7 +13,7 @@ void Add::Execute(std::stack<int> & stack, std::stringstream &,
     stack.push(subTop + top);
 }
 
-void Mul::Execute(std::stack<int> & stack, std::stringstream &,
+void Mul::Execute(CommandManager &, std::stack<int> & stack, std::stringstream &,
                     std::ostream &)
 {
     CheckStack(stack, 2);
@@ -24,7 +24,7 @@ void Mul::Execute(std::stack<int> & stack, std::stringstream &,
     stack.push(subTop * top);
 }
 
-void Sub::Execute(std::stack<int> & stack, std::stringstream &,
+void Sub::Execute(CommandManager &, std::stack<int> & stack, std::stringstream &,
                     std::ostream &)
 {
     CheckStack(stack, 2);
@@ -35,7 +35,7 @@ void Sub::Execute(std::stack<int> & stack, std::stringstream &,
     stack.push(subTop - top);
 }
 
-void Div::Execute(std::stack<int> & stack, std::stringstream &,
+void Div::Execute(CommandManager &, std::stack<int> & stack, std::stringstream &,
                     std::ostream &)
 {
     CheckStack(stack, 2);
@@ -50,7 +50,7 @@ void Div::Execute(std::stack<int> & stack, std::stringstream &,
     stack.push(subTop / top);
 }
 
-void Mod::Execute(std::stack<int> & stack, std::stringstream &,
+void Mod::Execute(CommandManager &, std::stack<int> & stack, std::stringstream &,
                     std::ostream &)
 {
     CheckStack(stack, 2);

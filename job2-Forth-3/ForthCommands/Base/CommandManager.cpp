@@ -60,7 +60,7 @@ void CommandManager::Debug(const std::string & keyword, std::stringstream & buff
             {
                 command_ = it->second.get();
             }
-            command_->Debug(buffer, in, keywords_);
+            command_->Debug(*this, buffer, in, keywords_);
             return;
         }
         default:
@@ -83,7 +83,7 @@ void CommandManager::Execute(const std::string & keyword, std::stringstream & bu
         case CT_COMMAND:
         {
             command_ = createdCommands_.find(keyword)->second.get();
-            command_->Execute(forthStack, buffer, out);
+            command_->Execute(*this, forthStack, buffer, out);
         }
     }
 }
@@ -99,7 +99,7 @@ void CommandManager::Pass(const std::string & keyword, std::stringstream & buffe
         case CT_COMMAND:
         {
             command_ = createdCommands_.find(keyword)->second.get();
-            command_->Pass(buffer);
+            command_->Pass(*this, buffer);
         }
     }
 }

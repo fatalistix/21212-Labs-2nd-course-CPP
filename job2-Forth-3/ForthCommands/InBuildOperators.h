@@ -11,9 +11,9 @@ public:
     Dup()=default;
     ~Dup() override=default;
 
-    void Debug(std::stringstream &, std::istream &, std::stack<std::string> &) override {};
-    void Execute(std::stack<int> &, std::stringstream &, std::ostream &) override;
-    void Pass(std::stringstream &) override {};
+    void Debug(CommandManager &, std::stringstream &, std::istream &, std::stack<std::string> &) override {};
+    void Execute(CommandManager &, std::stack<int> &, std::stringstream &, std::ostream &) override;
+    void Pass(CommandManager &, std::stringstream &) override {};
 };
 
 class Drop : public Command
@@ -22,9 +22,9 @@ public:
     Drop()=default;
     ~Drop() override=default;
 
-    void Debug(std::stringstream &, std::istream &, std::stack<std::string> &) override {};
-    void Execute(std::stack<int> &, std::stringstream &, std::ostream &) override;
-    void Pass(std::stringstream &) override {};
+    void Debug(CommandManager &, std::stringstream &, std::istream &, std::stack<std::string> &) override {};
+    void Execute(CommandManager &, std::stack<int> &, std::stringstream &, std::ostream &) override;
+    void Pass(CommandManager &, std::stringstream &) override {};
 };
 
 class Swap : public Command
@@ -33,9 +33,9 @@ public:
     Swap()=default;
     ~Swap() override=default;
 
-    void Debug(std::stringstream &, std::istream &, std::stack<std::string> &) override {};
-    void Execute(std::stack<int> &, std::stringstream &, std::ostream &) override;
-    void Pass(std::stringstream &) override {};
+    void Debug(CommandManager &, std::stringstream &, std::istream &, std::stack<std::string> &) override {};
+    void Execute(CommandManager &, std::stack<int> &, std::stringstream &, std::ostream &) override;
+    void Pass(CommandManager &, std::stringstream &) override {};
 };
 
 class Over : public Command
@@ -44,9 +44,9 @@ public:
     Over()=default;
     ~Over() override=default;
 
-    void Debug(std::stringstream &, std::istream &, std::stack<std::string> &) override {};
-    void Execute(std::stack<int> &, std::stringstream &, std::ostream &) override;
-    void Pass(std::stringstream &) override {};
+    void Debug(CommandManager &, std::stringstream &, std::istream &, std::stack<std::string> &) override {};
+    void Execute(CommandManager &, std::stack<int> &, std::stringstream &, std::ostream &) override;
+    void Pass(CommandManager &, std::stringstream &) override {};
 };
 
 class Rot : public Command
@@ -55,9 +55,9 @@ public:
     Rot()=default;
     ~Rot() override=default;
 
-    void Debug(std::stringstream &, std::istream &, std::stack<std::string> &) override {};
-    void Execute(std::stack<int> &, std::stringstream &, std::ostream &) override;
-    void Pass(std::stringstream &) override {};
+    void Debug(CommandManager &, std::stringstream &, std::istream &, std::stack<std::string> &) override {};
+    void Execute(CommandManager &, std::stack<int> &, std::stringstream &, std::ostream &) override;
+    void Pass(CommandManager &, std::stringstream &) override {};
 };
 
 namespace

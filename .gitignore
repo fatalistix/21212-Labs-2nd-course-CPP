@@ -33,6 +33,7 @@
 
 # xf's addons
 cmake-build-debug
+cmake-build-debug-coverage
 .*
 !/.gitignore
 

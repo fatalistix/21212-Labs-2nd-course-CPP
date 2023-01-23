@@ -10,8 +10,6 @@ add_link_options(-fsanitize=address)
 
 add_executable(job2_Forth_3
         main.cpp
-        Streams/CurrentStreams.h
-        Streams/CurrentStreams.cpp
         Containers/Factory.h
         Containers/SingletonHolder__Heap.h
         Containers/SingletonHolder__Static.h
@@ -20,8 +18,8 @@ add_executable(job2_Forth_3
         ForthCommands/Base/Singleton__CommandFactory.h
         Forth.cpp
         Forth.h
-        CommandManager.cpp
-        CommandManager.h
+        ForthCommands/Base/CommandManager.cpp
+        ForthCommands/Base/CommandManager.h
         ForthCommands/ArithmeticOperators.cpp
         ForthCommands/ArithmeticOperators.h
         ForthCommands/Base/Function__CheckStack.h
@@ -46,7 +44,6 @@ FetchContent_Declare(
 
 add_executable(ForthTest
         UnitTests/Tests.cpp
-        Streams/CurrentStreams.cpp
         Containers/Factory.h
         Containers/SingletonHolder__Heap.h
         Containers/SingletonHolder__Static.h
@@ -55,8 +52,8 @@ add_executable(ForthTest
         ForthCommands/Base/Singleton__CommandFactory.h
         Forth.cpp
         Forth.h
-        CommandManager.cpp
-        CommandManager.h
+        ForthCommands/Base/CommandManager.cpp
+        ForthCommands/Base/CommandManager.h
         ForthCommands/ArithmeticOperators.cpp
         ForthCommands/ArithmeticOperators.h
         ForthCommands/Base/Function__CheckStack.h

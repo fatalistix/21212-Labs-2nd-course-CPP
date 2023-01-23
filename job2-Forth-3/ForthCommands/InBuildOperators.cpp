@@ -2,7 +2,7 @@
 
 #include "Base/Function__CheckStack.h"
 
-void Dup::Execute(std::stack<int> & stack, std::stringstream &,
+void Dup::Execute(CommandManager &, std::stack<int> & stack, std::stringstream &,
                     std::ostream &)
 {
     if (stack.empty())
@@ -12,7 +12,7 @@ void Dup::Execute(std::stack<int> & stack, std::stringstream &,
     stack.push(stack.top());
 }
 
-void Drop::Execute(std::stack<int> & stack, std::stringstream &,
+void Drop::Execute(CommandManager &, std::stack<int> & stack, std::stringstream &,
                      std::ostream &)
 {
     if (stack.empty())
@@ -22,7 +22,7 @@ void Drop::Execute(std::stack<int> & stack, std::stringstream &,
     stack.pop();
 }
 
-void Swap::Execute(std::stack<int> & stack, std::stringstream &,
+void Swap::Execute(CommandManager &, std::stack<int> & stack, std::stringstream &,
                      std::ostream &)
 {
     CheckStack(stack, 2);
@@ -36,7 +36,7 @@ void Swap::Execute(std::stack<int> & stack, std::stringstream &,
     stack.push(subTop);
 }
 
-void Over::Execute(std::stack<int> & stack, std::stringstream &,
+void Over::Execute(CommandManager &, std::stack<int> & stack, std::stringstream &,
                      std::ostream &)
 {
     CheckStack(stack, 2);
@@ -49,7 +49,7 @@ void Over::Execute(std::stack<int> & stack, std::stringstream &,
     stack.push(subTop);
 }
 
-void Rot::Execute(std::stack<int> & stack, std::stringstream &,
+void Rot::Execute(CommandManager &, std::stack<int> & stack, std::stringstream &,
                     std::ostream &)
 {
     CheckStack(stack, 3);

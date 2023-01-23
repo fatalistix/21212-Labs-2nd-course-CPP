@@ -12,9 +12,9 @@ public:
     If()=default;
     ~If() override=default;
 
-    void Debug  (std::stringstream &, std::istream &, std::stack<std::string> &) override;
-    void Execute(std::stack<int> &, std::stringstream &, std::ostream &) override;
-    void Pass(std::stringstream &) override;
+    void Debug(CommandManager &, std::stringstream &, std::istream &, std::stack<std::string> &) override;
+    void Execute(CommandManager &, std::stack<int> &, std::stringstream &, std::ostream &) override;
+    void Pass(CommandManager &, std::stringstream &) override;
 };
 
 class Else : public Command
@@ -23,9 +23,9 @@ public:
     Else()=default;
     ~Else() override=default;
 
-    void Debug  (std::stringstream &, std::istream &, std::stack<std::string> &) override;
-    void Execute(std::stack<int> &, std::stringstream &, std::ostream &) override;
-    void Pass(std::stringstream &) override {};
+    void Debug(CommandManager &, std::stringstream &, std::istream &, std::stack<std::string> &) override;
+    void Execute(CommandManager &, std::stack<int> &, std::stringstream &, std::ostream &) override;
+    void Pass(CommandManager &, std::stringstream &) override {};
 };
 
 class Then : public Command
@@ -34,9 +34,9 @@ public:
     Then()=default;
     ~Then() override=default;
 
-    void Debug  (std::stringstream &, std::istream &, std::stack<std::string> &) override;
-    void Execute(std::stack<int> &, std::stringstream &, std::ostream &) override;
-    void Pass(std::stringstream &) override {};
+    void Debug(CommandManager &, std::stringstream &, std::istream &, std::stack<std::string> &) override;
+    void Execute(CommandManager &, std::stack<int> &, std::stringstream &, std::ostream &) override;
+    void Pass(CommandManager &, std::stringstream &) override {};
 };
 
 namespace

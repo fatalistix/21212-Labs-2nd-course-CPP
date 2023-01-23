@@ -5,11 +5,12 @@
 #include <sstream>
 #include <stack>
 #include <string>
-#include <vector>
 
 //#include "Containers/SingletonHolder__Heap.h"
-#include "ForthCommands/Base/Singleton__CommandFactory.h"
-#include "ForthCommands/Base/Command.h"
+#include "Singleton__CommandFactory.h"
+#include "Command.h"
+
+class Command;
 
 class CommandManager
 {
