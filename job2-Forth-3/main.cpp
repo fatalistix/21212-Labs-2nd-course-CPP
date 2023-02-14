@@ -23,12 +23,7 @@ int main()
         std::cout << "< Input/output streams error" << std::endl;
         return 0;
     }
-//    catch (std::ostream::failure &)
-//    {
-//        std::cout << "< Error writing to stream/file" << std::endl;
-//        return 0;
-//    }
-    int * a = new int[100];
+    
     std::cout << "< Exited without errors" << std::endl;
     return 0;
 }
